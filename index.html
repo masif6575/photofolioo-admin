@@ -1,0 +1,2357 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PhotoFolio Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F4F4;
+  --sidebar:#1E1719;
+  --sidebar-w:240px;
+  --sidebar-hover:rgba(255,249,247,0.07);
+  --sidebar-active:rgba(201,120,130,0.18);
+  --rose:#C97882;
+  --blush:#E8B8B9;
+  --accent:#B76E79;
+  --charcoal:#332B2C;
+  --border:#EDE0E1;
+  --white:#FFFFFF;
+  --surface:#FFFFFF;
+  --text:#332B2C;
+  --text-2:#6B5758;
+  --text-3:#9C8486;
+  --green:#4CAF7D;
+  --amber:#E8A838;
+  --red:#D95F5F;
+  --blue:#5B8FD4;
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --radius:12px;
+  --shadow:0 1px 3px rgba(51,43,44,0.06),0 4px 16px rgba(51,43,44,0.06);
+  --shadow-md:0 4px 24px rgba(51,43,44,0.1);
+}
+html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5}
+button{cursor:pointer;border:none;background:none;font-family:var(--sans)}
+a{color:inherit;text-decoration:none}
+input,select,textarea{font-family:var(--sans)}
+
+/* ── Layout ── */
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--sidebar);
+  display:flex;flex-direction:column;
+  overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:none;
+  transition:width 0.25s ease;
+  position:relative;z-index:20;
+}
+.sidebar::-webkit-scrollbar{display:none}
+
+.sidebar-logo{
+  padding:1.25rem 1.125rem 1rem;
+  display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid rgba(255,249,247,0.07);
+  flex-shrink:0;
+}
+.logo-mark{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--rose);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.logo-mark svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}
+.logo-text{font-family:var(--serif);font-size:1.0625rem;color:#fff;letter-spacing:-0.01em;white-space:nowrap}
+.logo-text span{color:var(--blush)}
+
+.sidebar-section{padding:1.25rem 0.75rem 0.375rem;font-size:0.6rem;font-weight:600;color:rgba(255,249,247,0.3);letter-spacing:0.1em;text-transform:uppercase}
+
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:0.5625rem 0.875rem;
+  margin:0 0.375rem;
+  border-radius:8px;
+  font-size:0.8125rem;color:rgba(255,249,247,0.6);
+  cursor:pointer;
+  transition:background 0.15s,color 0.15s;
+  white-space:nowrap;
+  user-select:none;
+}
+.nav-item:hover{background:var(--sidebar-hover);color:rgba(255,249,247,0.9)}
+.nav-item.active{background:var(--sidebar-active);color:#fff;font-weight:500}
+.nav-item svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.nav-item .badge{margin-left:auto;background:var(--rose);color:#fff;font-size:0.6rem;font-weight:600;padding:2px 6px;border-radius:10px;min-width:18px;text-align:center}
+.nav-item .badge.amber{background:var(--amber)}
+
+.nav-sub{padding-left:1.625rem}
+.nav-sub .nav-item{font-size:0.78125rem;padding:0.4375rem 0.875rem}
+
+.sidebar-footer{margin-top:auto;padding:1rem 0.75rem;border-top:1px solid rgba(255,249,247,0.07);flex-shrink:0}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:0.5rem 0.5rem;border-radius:8px;transition:background 0.15s;cursor:pointer}
+.sidebar-user:hover{background:var(--sidebar-hover)}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:var(--rose);display:flex;align-items:center;justify-content:center;font-size:0.6875rem;font-weight:600;color:#fff;flex-shrink:0}
+.user-name{font-size:0.8125rem;color:rgba(255,249,247,0.8);font-weight:500;white-space:nowrap}
+.user-role{font-size:0.6875rem;color:rgba(255,249,247,0.4);margin-top:1px}
+
+/* ── Main ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* ── Topbar ── */
+.topbar{
+  height:60px;background:var(--white);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.75rem;gap:1rem;flex-shrink:0;
+}
+.topbar-left{display:flex;align-items:center;gap:1rem}
+.topbar-title{font-size:1rem;font-weight:600;color:var(--text)}
+.topbar-sub{font-size:0.75rem;color:var(--text-3);margin-top:1px}
+
+.topbar-search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:8px;padding:0 0.875rem;height:36px;
+  min-width:240px;
+}
+.topbar-search input{background:none;border:none;outline:none;font-size:0.8125rem;color:var(--text);width:100%}
+.topbar-search input::placeholder{color:var(--text-3)}
+.topbar-search svg{width:14px;height:14px;color:var(--text-3);flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round}
+
+.topbar-right{display:flex;align-items:center;gap:0.625rem}
+.tb-btn{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-2);transition:background 0.15s;position:relative}
+.tb-btn:hover{background:var(--bg)}
+.tb-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.tb-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--rose);border-radius:50%;border:1.5px solid var(--white)}
+
+.preview-btn{
+  height:36px;padding:0 1rem;
+  background:var(--charcoal);color:#fff;
+  border-radius:8px;font-size:0.8125rem;font-weight:500;
+  display:flex;align-items:center;gap:6px;
+  transition:background 0.15s;
+}
+.preview-btn:hover{background:var(--accent)}
+.preview-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Page content ── */
+.page-wrap{flex:1;overflow-y:auto;padding:1.75rem;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.page-wrap::-webkit-scrollbar{width:4px}
+.page-wrap::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+.page{display:none}
+.page.active{display:block}
+
+/* ── Dashboard ── */
+.dash-greeting{margin-bottom:1.75rem}
+.dash-greeting h1{font-size:1.375rem;font-weight:600;color:var(--text)}
+.dash-greeting p{font-size:0.875rem;color:var(--text-3);margin-top:3px}
+
+/* Stat cards */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.stat-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.25rem 1.25rem 1rem;
+  transition:box-shadow 0.2s;
+}
+.stat-card:hover{box-shadow:var(--shadow-md)}
+.stat-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.875rem}
+.stat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.stat-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.si-rose{background:#FFF0F1;color:var(--rose)}
+.si-green{background:#EAF7F0;color:var(--green)}
+.si-amber{background:#FEF6E4;color:var(--amber)}
+.si-blue{background:#EEF4FC;color:var(--blue)}
+.si-purple{background:#F3EEF8;color:#8B5CF6}
+.stat-trend{display:flex;align-items:center;gap:3px;font-size:0.6875rem;font-weight:500;padding:3px 8px;border-radius:100px}
+.trend-up{background:#EAF7F0;color:var(--green)}
+.trend-down{background:#FEF0F0;color:var(--red)}
+.trend-up svg,.trend-down svg{width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.stat-num{font-size:1.75rem;font-weight:600;color:var(--text);line-height:1;margin-bottom:4px}
+.stat-label{font-size:0.75rem;color:var(--text-3)}
+
+/* Mini chart bars */
+.mini-chart{display:flex;align-items:flex-end;gap:3px;height:32px;margin-top:1rem;padding-top:0.5rem;border-top:1px solid var(--border)}
+.mini-bar{flex:1;border-radius:3px 3px 0 0;transition:opacity 0.2s;min-height:4px}
+.mini-bar:hover{opacity:0.75}
+
+/* Row of two panels */
+.row-2{display:grid;grid-template-columns:2fr 1fr;gap:1rem;margin-bottom:1rem}
+.row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem}
+
+/* Panel */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.125rem 1.25rem;border-bottom:1px solid var(--border);
+}
+.panel-title{font-size:0.9375rem;font-weight:600;color:var(--text)}
+.panel-action{font-size:0.75rem;color:var(--rose);font-weight:500;cursor:pointer;transition:opacity 0.15s}
+.panel-action:hover{opacity:0.7}
+.panel-body{padding:1.25rem}
+
+/* Revenue chart */
+.chart-area{padding:1.25rem 1.25rem 0.75rem}
+.chart-labels{display:flex;justify-content:space-between;padding:0 0.25rem;margin-bottom:4px}
+.chart-label{font-size:0.625rem;color:var(--text-3)}
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding:0 0.25rem}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.chart-bar{width:100%;border-radius:4px 4px 0 0;transition:opacity 0.2s;cursor:pointer;position:relative}
+.chart-bar:hover{opacity:0.8}
+.chart-bar-val{
+  position:absolute;top:-20px;left:50%;transform:translateX(-50%);
+  font-size:0.5625rem;color:var(--text-3);white-space:nowrap;
+  opacity:0;transition:opacity 0.2s;
+}
+.chart-bar:hover .chart-bar-val{opacity:1}
+.chart-month{font-size:0.625rem;color:var(--text-3)}
+.chart-legend{display:flex;gap:1rem;padding:0.75rem 1.25rem;border-top:1px solid var(--border)}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:0.6875rem;color:var(--text-3)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+
+/* Tables */
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{
+  text-align:left;padding:0.75rem 1.25rem;
+  font-size:0.6875rem;font-weight:500;color:var(--text-3);
+  letter-spacing:0.04em;text-transform:uppercase;
+  background:var(--bg);border-bottom:1px solid var(--border);
+}
+.data-table td{
+  padding:0.875rem 1.25rem;
+  font-size:0.8125rem;color:var(--text);
+  border-bottom:1px solid var(--border);
+  vertical-align:middle;
+}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:rgba(201,120,130,0.03)}
+.data-table td.muted{color:var(--text-3)}
+
+.order-id{font-weight:500;color:var(--rose)}
+.customer-cell{display:flex;align-items:center;gap:8px}
+.customer-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.625rem;font-weight:600;flex-shrink:0}
+.ca-1{background:#F0D4D6;color:#9A3A42}
+.ca-2{background:#D4D0F0;color:#4840A0}
+.ca-3{background:#D0EAD8;color:#2A6A44}
+.ca-4{background:#F0E4D0;color:#7A5020}
+.ca-5{background:#D8D4E8;color:#5040A0}
+.ca-6{background:#D8EAF0;color:#2060A0}
+.ca-7{background:#EAD8E0;color:#802040}
+
+.status-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:100px;
+  font-size:0.6875rem;font-weight:500;white-space:nowrap;
+}
+.status-badge::before{content:'';width:5px;height:5px;border-radius:50%}
+.s-received{background:#EEF4FC;color:var(--blue)}.s-received::before{background:var(--blue)}
+.s-designing{background:#F3EEF8;color:#8B5CF6}.s-designing::before{background:#8B5CF6}
+.s-approval{background:#FEF6E4;color:var(--amber)}.s-approval::before{background:var(--amber)}
+.s-approved{background:#EAF7F0;color:var(--green)}.s-approved::before{background:var(--green)}
+.s-printing{background:#FFF0F1;color:var(--rose)}.s-printing::before{background:var(--rose)}
+.s-shipped{background:#E8F4F8;color:#2080A0}.s-shipped::before{background:#2080A0}
+.s-delivered{background:#EAF7F0;color:#2A6A44}.s-delivered::before{background:#2A6A44}
+.s-cancelled{background:#FEF0F0;color:var(--red)}.s-cancelled::before{background:var(--red)}
+.s-revision{background:#FEF6E4;color:#C07020}.s-revision::before{background:#C07020}
+.s-payment{background:#F3EEF8;color:#6B30C0}.s-payment::before{background:#6B30C0}
+
+.action-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:6px;font-size:0.75rem;font-weight:500;
+  transition:background 0.15s;
+}
+.ab-ghost{border:1px solid var(--border);color:var(--text-2)}
+.ab-ghost:hover{background:var(--bg)}
+.ab-primary{background:var(--charcoal);color:#fff}
+.ab-primary:hover{background:var(--accent)}
+
+/* Orders page full */
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap}
+.page-header-left h2{font-size:1.25rem;font-weight:600;color:var(--text)}
+.page-header-left p{font-size:0.8125rem;color:var(--text-3);margin-top:2px}
+
+.filter-row{display:flex;align-items:center;gap:0.75rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.filter-chip{
+  height:32px;padding:0 0.875rem;
+  border:1px solid var(--border);border-radius:100px;
+  font-size:0.75rem;color:var(--text-2);background:var(--white);
+  cursor:pointer;transition:border-color 0.15s,background 0.15s,color 0.15s;
+  display:flex;align-items:center;gap:5px;
+}
+.filter-chip:hover{border-color:var(--rose)}
+.filter-chip.active{border-color:var(--rose);background:var(--rose);color:#fff}
+.filter-chip .count{font-size:0.6rem;background:rgba(255,255,255,0.25);padding:1px 5px;border-radius:10px}
+.filter-chip:not(.active) .count{background:var(--bg);color:var(--text-3)}
+
+.search-box{
+  display:flex;align-items:center;gap:8px;
+  height:36px;padding:0 0.875rem;
+  border:1px solid var(--border);border-radius:8px;background:var(--white);
+  flex:1;max-width:320px;
+}
+.search-box input{border:none;outline:none;font-size:0.8125rem;color:var(--text);width:100%;background:none}
+.search-box svg{width:13px;height:13px;color:var(--text-3);flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round}
+
+.select-input{
+  height:36px;padding:0 2rem 0 0.875rem;
+  border:1px solid var(--border);border-radius:8px;background:var(--white);
+  font-size:0.8125rem;color:var(--text);outline:none;
+  -webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239C8486' stroke-width='2' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 0.625rem center;
+  cursor:pointer;
+}
+
+/* Products page */
+.products-grid-admin{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+.product-admin-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;transition:box-shadow 0.2s;
+}
+.product-admin-card:hover{box-shadow:var(--shadow-md)}
+.product-admin-thumb{
+  height:160px;display:flex;align-items:center;justify-content:center;position:relative;
+}
+.pa-bg-1{background:linear-gradient(135deg,#FAF0F1,#F0D8DA)}
+.pa-bg-2{background:linear-gradient(135deg,#F5EEF8,#E8DAF0)}
+.pa-bg-3{background:linear-gradient(135deg,#EEF5F0,#D8EAE0)}
+.pa-bg-4{background:linear-gradient(135deg,#FFF8E8,#F5E8C0)}
+.product-admin-badges{position:absolute;top:0.75rem;left:0.75rem;display:flex;gap:4px;flex-wrap:wrap}
+.pb{padding:2px 7px;border-radius:4px;font-size:0.5625rem;font-weight:600}
+.pb-best{background:var(--charcoal);color:#fff}
+.pb-new{background:var(--rose);color:#fff}
+.pb-hidden{background:#9C8486;color:#fff}
+.product-admin-actions{position:absolute;top:0.75rem;right:0.75rem;display:flex;gap:4px;opacity:0;transition:opacity 0.2s}
+.product-admin-card:hover .product-admin-actions{opacity:1}
+.pa-action{width:28px;height:28px;background:var(--white);border-radius:6px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(51,43,44,0.12);transition:background 0.15s}
+.pa-action:hover{background:var(--rose-pale, #FFF0F1)}
+.pa-action svg{width:12px;height:12px;fill:none;stroke:var(--text-2);stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.product-admin-info{padding:1rem}
+.product-admin-name{font-size:0.9375rem;font-weight:500;color:var(--text);margin-bottom:2px}
+.product-admin-cat{font-size:0.75rem;color:var(--text-3);margin-bottom:0.75rem}
+.product-admin-footer{display:flex;align-items:center;justify-content:space-between}
+.product-admin-price{font-size:1rem;font-weight:600;color:var(--text)}
+.toggle-wrap{display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text-3)}
+.toggle{position:relative;width:32px;height:18px}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;background:var(--border);border-radius:9px;cursor:pointer;transition:background 0.2s}
+.toggle input:checked + .toggle-track{background:var(--green)}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform 0.2s;pointer-events:none}
+.toggle input:checked ~ .toggle-thumb{transform:translateX(14px)}
+
+/* Mini book thumb */
+.admin-book{width:72px;height:90px;background:#fff;border-radius:2px 7px 7px 2px;position:relative;overflow:hidden;box-shadow:-3px 3px 12px rgba(51,43,44,0.14)}
+.admin-book-spine{position:absolute;left:0;top:0;bottom:0;width:10px}
+.abs-1{background:var(--rose)}
+.abs-2{background:#9B8AC8}
+.abs-3{background:#6BAA8A}
+.abs-4{background:#D4A060}
+.admin-book-body{position:absolute;left:13px;top:8px;right:5px;bottom:8px;display:flex;flex-direction:column;gap:4px}
+.abb-img{flex:2;background:var(--border);border-radius:2px}
+.abb-l{height:2.5px;background:#EEDCDD;border-radius:1px}
+.abb-l:first-of-type{background:var(--rose);height:3px;width:65%}
+
+/* Homepage builder */
+.builder-layout{display:grid;grid-template-columns:260px 1fr;gap:1.25rem;align-items:start}
+.section-list{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.section-list-head{padding:1rem 1.125rem;border-bottom:1px solid var(--border);font-size:0.875rem;font-weight:600;color:var(--text)}
+.section-item{
+  display:flex;align-items:center;gap:10px;
+  padding:0.75rem 1.125rem;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background 0.15s;
+}
+.section-item:last-child{border-bottom:none}
+.section-item:hover{background:var(--bg)}
+.section-item.active{background:#FFF0F1;border-left:3px solid var(--rose)}
+.section-item.active .si-name{color:var(--rose);font-weight:500}
+.drag-handle{color:var(--text-3);flex-shrink:0;cursor:grab}
+.drag-handle svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.75}
+.si-icon{width:28px;height:28px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.si-icon svg{width:13px;height:13px;fill:none;stroke:var(--text-2);stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.si-name{font-size:0.8125rem;color:var(--text);flex:1}
+.si-toggle{flex-shrink:0}
+
+.editor-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.editor-head{padding:1.125rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.editor-head-title{font-size:0.9375rem;font-weight:600;color:var(--text)}
+.editor-body{padding:1.5rem}
+
+.form-group{margin-bottom:1.25rem}
+.form-label{font-size:0.75rem;font-weight:500;color:var(--text-2);margin-bottom:0.375rem;display:block}
+.form-input{
+  width:100%;height:38px;padding:0 0.875rem;
+  border:1px solid var(--border);border-radius:8px;
+  font-size:0.875rem;color:var(--text);background:var(--white);
+  outline:none;transition:border-color 0.2s;
+}
+.form-input:focus{border-color:var(--rose)}
+.form-textarea{
+  width:100%;padding:0.75rem 0.875rem;min-height:80px;
+  border:1px solid var(--border);border-radius:8px;
+  font-size:0.875rem;color:var(--text);background:var(--white);
+  outline:none;transition:border-color 0.2s;resize:vertical;line-height:1.5;
+}
+.form-textarea:focus{border-color:var(--rose)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.875rem}
+.img-upload{
+  border:1.5px dashed var(--border);border-radius:10px;
+  padding:1.5rem;text-align:center;cursor:pointer;
+  transition:border-color 0.2s,background 0.2s;
+}
+.img-upload:hover{border-color:var(--rose);background:#FFF8F9}
+.img-upload svg{width:28px;height:28px;fill:none;stroke:var(--text-3);stroke-width:1.5;stroke-linecap:round;margin:0 auto 8px}
+.img-upload p{font-size:0.8125rem;color:var(--text-3)}
+.img-upload span{font-size:0.6875rem;color:var(--text-3);opacity:0.6}
+
+.save-bar{
+  display:flex;align-items:center;justify-content:flex-end;gap:0.75rem;
+  padding:1rem 1.5rem;border-top:1px solid var(--border);
+  background:var(--bg);
+}
+.btn-cancel{height:36px;padding:0 1.125rem;border:1px solid var(--border);border-radius:8px;font-size:0.8125rem;color:var(--text-2);background:var(--white);transition:background 0.15s}
+.btn-cancel:hover{background:var(--bg)}
+.btn-save{height:36px;padding:0 1.25rem;background:var(--charcoal);color:#fff;border-radius:8px;font-size:0.8125rem;font-weight:500;transition:background 0.15s;display:flex;align-items:center;gap:6px}
+.btn-save:hover{background:var(--accent)}
+.btn-save svg{width:13px;height:13px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Settings */
+.settings-layout{display:grid;grid-template-columns:200px 1fr;gap:1.25rem;align-items:start}
+.settings-nav{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.settings-nav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:0.75rem 1rem;border-bottom:1px solid var(--border);
+  font-size:0.8125rem;color:var(--text-2);cursor:pointer;transition:background 0.15s;
+}
+.settings-nav-item:last-child{border-bottom:none}
+.settings-nav-item:hover{background:var(--bg)}
+.settings-nav-item.active{background:#FFF0F1;color:var(--rose);font-weight:500}
+.settings-nav-item svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.settings-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.settings-form-head{padding:1.125rem 1.5rem;border-bottom:1px solid var(--border)}
+.settings-form-title{font-size:0.9375rem;font-weight:600;color:var(--text)}
+.settings-form-sub{font-size:0.75rem;color:var(--text-3);margin-top:2px}
+.settings-form-body{padding:1.5rem}
+.form-divider{height:1px;background:var(--border);margin:1.5rem 0}
+.form-section-title{font-size:0.75rem;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem}
+
+/* Toast */
+.toast-wrap{position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;gap:0.5rem;z-index:1000;pointer-events:none}
+.toast{
+  display:flex;align-items:center;gap:10px;
+  background:var(--charcoal);color:#fff;
+  padding:0.75rem 1.125rem;border-radius:10px;
+  font-size:0.875rem;font-weight:500;
+  box-shadow:var(--shadow-md);
+  transform:translateY(100%);opacity:0;
+  transition:transform 0.3s ease,opacity 0.3s ease;
+  pointer-events:all;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:#2A6A44}
+.toast svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+/* Modal */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(51,43,44,0.4);
+  z-index:200;align-items:center;justify-content:center;padding:1.5rem;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--white);border-radius:16px;
+  width:100%;max-width:540px;max-height:90vh;overflow-y:auto;
+  box-shadow:0 20px 60px rgba(51,43,44,0.2);
+}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:var(--white);z-index:1;
+}
+.modal-title{font-size:1rem;font-weight:600;color:var(--text)}
+.modal-close{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text-3);transition:background 0.15s}
+.modal-close:hover{background:var(--bg)}
+.modal-close svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.modal-body{padding:1.5rem}
+.modal-footer{display:flex;gap:0.75rem;justify-content:flex-end;padding:1.125rem 1.5rem;border-top:1px solid var(--border)}
+
+/* Order detail modal */
+.order-status-timeline{display:flex;flex-direction:column;gap:0;margin:1rem 0}
+.ost-step{display:flex;gap:1rem;position:relative}
+.ost-step:not(:last-child)::after{
+  content:'';position:absolute;left:15px;top:32px;
+  width:1px;height:calc(100% - 8px);
+  background:var(--border);
+}
+.ost-dot{
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;border:2px solid var(--border);background:var(--white);
+}
+.ost-dot.done{border-color:var(--green);background:#EAF7F0}
+.ost-dot.active{border-color:var(--rose);background:#FFF0F1}
+.ost-dot svg{width:13px;height:13px;fill:none;stroke:var(--text-3);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ost-dot.done svg{stroke:var(--green)}
+.ost-dot.active svg{stroke:var(--rose)}
+.ost-content{padding-bottom:1.25rem}
+.ost-title{font-size:0.875rem;font-weight:500;color:var(--text);line-height:30px}
+.ost-sub{font-size:0.75rem;color:var(--text-3);margin-top:1px;line-height:1.5}
+
+/* Customers */
+.customer-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem}
+
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:0.875rem 1.25rem;border-top:1px solid var(--border)}
+.page-info{font-size:0.8125rem;color:var(--text-3)}
+.page-btns{display:flex;gap:4px}
+.page-btn{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.8125rem;color:var(--text-2);border:1px solid var(--border);background:var(--white);transition:background 0.15s;cursor:pointer}
+.page-btn.active{background:var(--charcoal);color:#fff;border-color:var(--charcoal)}
+.page-btn:hover:not(.active){background:var(--bg)}
+.page-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Pill select for status */
+.status-select{height:32px;padding:0 1.75rem 0 0.75rem;border:1px solid var(--border);border-radius:6px;font-size:0.75rem;background:var(--white);-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239C8486' stroke-width='2' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 0.375rem center;cursor:pointer;color:var(--text)}
+
+/* Responsive */
+@media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,1fr)}.row-2{grid-template-columns:1fr}}
+@media(max-width:800px){.stat-grid{grid-template-columns:1fr 1fr}.builder-layout{grid-template-columns:1fr}.settings-layout{grid-template-columns:1fr}.sidebar{position:fixed;left:-100%;z-index:100}.sidebar.open{left:0}.topbar-search{display:none}}
+
+/* Add category modal extras */
+.cat-emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:8px}
+.cat-emoji-btn{height:36px;border-radius:8px;border:1.5px solid var(--border-1);background:var(--bg-2);font-size:1.125rem;cursor:pointer;transition:border-color 0.15s,background 0.15s;display:flex;align-items:center;justify-content:center}
+.cat-emoji-btn.selected,.cat-emoji-btn:hover{border-color:var(--rose);background:var(--rose-pale)}
+.color-swatch-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.color-swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform 0.15s,border-color 0.15s}
+.color-swatch.selected,.color-swatch:hover{transform:scale(1.18);border-color:var(--charcoal)}
+.cat-preview{background:var(--bg-2);border:1px solid var(--border-1);border-radius:10px;padding:1rem;text-align:center;margin-top:0.75rem}
+.cat-preview-card{width:100px;height:80px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:6px}
+.cat-preview-name{font-size:0.875rem;font-weight:500;color:var(--text-1)}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+<!-- ── Sidebar ── -->
+<aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+  <div class="sidebar-logo">
+    <div class="logo-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+    </div>
+    <div class="logo-text">Photo<span>Folio</span></div>
+  </div>
+
+  <div class="sidebar-section">Main</div>
+  <div class="nav-item active" onclick="showPage('dashboard')" role="button" tabindex="0" aria-current="page">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Dashboard
+  </div>
+
+  <div class="sidebar-section">Catalog</div>
+  <div class="nav-item" onclick="showPage('products')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    Products
+    <span class="badge">12</span>
+  </div>
+  <div class="nav-item" onclick="showPage('categories')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/></svg>
+    Categories
+  </div>
+  <div class="nav-item" onclick="alert('Product Options page — coming in next panel build')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+    Product Options
+  </div>
+
+  <div class="sidebar-section">Orders</div>
+  <div class="nav-item" onclick="showPage('orders')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    All Orders
+    <span class="badge amber">8</span>
+  </div>
+  <div class="nav-sub">
+    <div class="nav-item" onclick="showPage('orders')" role="button" tabindex="0">Pending <span class="badge amber">0</span></div>
+    <div class="nav-item" onclick="showPage('orders')" role="button" tabindex="0">Awaiting Approval <span class="badge amber">2</span></div>
+    <div class="nav-item" onclick="showPage('orders')" role="button" tabindex="0">In Production</div>
+    <div class="nav-item" onclick="showPage('orders')" role="button" tabindex="0">Shipped</div>
+    <div class="nav-item" onclick="showPage('orders')" role="button" tabindex="0">Delivered</div>
+  </div>
+
+  <div class="sidebar-section">Customers</div>
+  <div class="nav-item" onclick="showPage('customers')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Customers
+  </div>
+  <div class="nav-item" onclick="alert('Design Requests page — manage all pending design jobs')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    Design Requests
+    <span class="badge">4</span>
+  </div>
+  <div class="nav-item" onclick="alert('Uploaded Photos — view all customer photo uploads')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    Uploaded Photos
+  </div>
+  <div class="nav-item" onclick="alert('Payments page — verify bKash transactions, manage payments')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+    Payments
+  </div>
+
+  <div class="sidebar-section">Marketing</div>
+  <div class="nav-item" onclick="alert('Coupons — create and manage discount codes')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    Coupons
+  </div>
+  <div class="nav-item" onclick="alert('Promotional Banners — manage homepage banners and announcements')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+    Banners
+  </div>
+  <div class="nav-item" onclick="alert('Testimonials — add and edit customer reviews shown on homepage')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Testimonials
+  </div>
+
+  <div class="sidebar-section">Website</div>
+  <div class="nav-item" onclick="showPage('homepage')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Homepage Builder
+  </div>
+
+  <div class="sidebar-section">System</div>
+  <div class="nav-item" onclick="showPage('settings')" role="button" tabindex="0">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Settings
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="user-avatar" aria-hidden="true">AD</div>
+      <div>
+        <div class="user-name">Admin</div>
+        <div class="user-role">Super Admin</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── Main area ── -->
+<div class="main">
+  <!-- Topbar -->
+  <header class="topbar" role="banner">
+    <div class="topbar-left">
+      <button id="sidebarToggle" aria-label="Toggle sidebar" style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:var(--text-2);display:none">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><line x1="2" y1="6" x2="16" y2="6"/><line x1="2" y1="11" x2="16" y2="11"/><line x1="2" y1="16" x2="16" y2="16"/></svg>
+      </button>
+      <div class="topbar-search" role="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="7"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        <input type="text" placeholder="Search orders, customers, products…" aria-label="Search">
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="tb-btn" aria-label="Notifications (2 unread)">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="tb-dot" aria-hidden="true"></span>
+      </button>
+      <a href="https://claude.ai/artifact/7r5QjsXKSJzT34rFWZrftD" target="_blank" class="preview-btn" aria-label="Preview public website">
+        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Preview site
+      </a>
+    </div>
+  </header>
+
+  <!-- Pages -->
+  <div class="page-wrap" role="main">
+
+    <!-- ─── DASHBOARD ─── -->
+    <section class="page active" id="page-dashboard" aria-label="Dashboard">
+      <div class="dash-greeting">
+        <h1>Good morning 👋</h1>
+        <p>Here's what's happening with PhotoFolio today — Monday, 21 September 2026</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon si-rose" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <span class="stat-trend trend-up" aria-label="Up 18% vs last month">
+              <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>18%
+            </span>
+          </div>
+          <div class="stat-num" aria-label="0 total orders">0</div>
+          <div class="stat-label">Total orders</div>
+          <div class="mini-chart" aria-hidden="true">
+            <div class="mini-bar" style="background:var(--blush);height:40%"></div>
+            <div class="mini-bar" style="background:var(--blush);height:55%"></div>
+            <div class="mini-bar" style="background:var(--blush);height:45%"></div>
+            <div class="mini-bar" style="background:var(--blush);height:70%"></div>
+            <div class="mini-bar" style="background:var(--blush);height:60%"></div>
+            <div class="mini-bar" style="background:var(--blush);height:80%"></div>
+            <div class="mini-bar" style="background:var(--rose);height:100%"></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon si-amber" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <span class="stat-trend trend-down" aria-label="Down 3% vs last month">
+              <svg viewBox="0 0 24 24"><polyline points="18 9 12 15 6 9"/></svg>3%
+            </span>
+          </div>
+          <div class="stat-num" aria-label="0 pending orders">0</div>
+          <div class="stat-label">Pending orders</div>
+          <div class="mini-chart" aria-hidden="true">
+            <div class="mini-bar" style="background:#FEE8B0;height:50%"></div>
+            <div class="mini-bar" style="background:#FEE8B0;height:70%"></div>
+            <div class="mini-bar" style="background:#FEE8B0;height:90%"></div>
+            <div class="mini-bar" style="background:#FEE8B0;height:60%"></div>
+            <div class="mini-bar" style="background:#FEE8B0;height:75%"></div>
+            <div class="mini-bar" style="background:#FEE8B0;height:50%"></div>
+            <div class="mini-bar" style="background:var(--amber);height:40%"></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon si-green" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <span class="stat-trend trend-up" aria-label="Up 24% vs last month">
+              <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>24%
+            </span>
+          </div>
+          <div class="stat-num" aria-label="0 revenue">৳0</div>
+          <div class="stat-label">Total revenue</div>
+          <div class="mini-chart" aria-hidden="true">
+            <div class="mini-bar" style="background:#B8E8CC;height:35%"></div>
+            <div class="mini-bar" style="background:#B8E8CC;height:55%"></div>
+            <div class="mini-bar" style="background:#B8E8CC;height:48%"></div>
+            <div class="mini-bar" style="background:#B8E8CC;height:72%"></div>
+            <div class="mini-bar" style="background:#B8E8CC;height:65%"></div>
+            <div class="mini-bar" style="background:#B8E8CC;height:88%"></div>
+            <div class="mini-bar" style="background:var(--green);height:100%"></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon si-blue" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <span class="stat-trend trend-up" aria-label="Up 11% vs last month">
+              <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>11%
+            </span>
+          </div>
+          <div class="stat-num" aria-label="0 total customers">0</div>
+          <div class="stat-label">Customers</div>
+          <div class="mini-chart" aria-hidden="true">
+            <div class="mini-bar" style="background:#B8D4F0;height:30%"></div>
+            <div class="mini-bar" style="background:#B8D4F0;height:50%"></div>
+            <div class="mini-bar" style="background:#B8D4F0;height:45%"></div>
+            <div class="mini-bar" style="background:#B8D4F0;height:65%"></div>
+            <div class="mini-bar" style="background:#B8D4F0;height:55%"></div>
+            <div class="mini-bar" style="background:#B8D4F0;height:80%"></div>
+            <div class="mini-bar" style="background:var(--blue);height:95%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row-2">
+        <!-- Revenue chart -->
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Revenue — 2026</span>
+            <span class="panel-action">Export CSV</span>
+          </div>
+          <div class="chart-area" aria-label="Monthly revenue bar chart">
+            <div class="bar-chart" role="img" aria-label="Revenue bars from March to September 2026">
+              <div class="chart-bar-wrap">
+                <div class="chart-bar" style="height:2%" role="presentation">
+                  <span class="chart-bar-val">৳0</span>
+                </div>
+                <span class="chart-month">Mar</span>
+              </div>
+              <div class="chart-bar-wrap">
+                <div class="chart-bar" style="height:2%" role="presentation">
+                  <span class="chart-bar-val">৳0</span>
+                </div>
+                <span class="chart-month">Apr</span>
+              </div>
+              <div class="chart-bar-wrap">
+                <div class="chart-bar" style="height:2%" role="presentation">
+                  <span class="chart-bar-val">৳0</span>
+                </div>
+                <span class="chart-month">May</span>
+              </div>
+              <div class="chart-bar-wrap">
+                <div class="chart-bar" style="height:2%" role="presentation">
+                  <span class="chart-bar-val">৳0</span>
+                </div>
+                <span class="chart-month">Jun</span>
+              </div>
+              <div class="chart-bar-wrap">
+                <div class="chart-bar" style="height:2%" role="presentation">
+                  <span class="chart-bar-val">৳0</span>
+                </div>
+                <span class="chart-month">Jul</span>
+              </div>
+              <div class="chart-bar-wrap">
+                <div class="chart-bar" style="height:2%" role="presentation">
+                  <span class="chart-bar-val">৳0</span>
+                </div>
+                <span class="chart-month">Aug</span>
+              </div>
+              <div class="chart-bar-wrap">
+                <div class="chart-bar" style="height:2%" role="presentation">
+                  <span class="chart-bar-val">৳1.14L</span>
+                </div>
+                <span class="chart-month">Sep</span>
+              </div>
+            </div>
+            <div class="chart-legend" aria-hidden="true">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--rose)"></div>Revenue (৳)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order status breakdown -->
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Order status</span>
+            <span class="panel-action" onclick="showPage('orders')">View all</span>
+          </div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:0.875rem">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span class="status-badge s-received">Order received</span>
+              <span style="font-size:0.875rem;font-weight:600;color:var(--text)">3</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span class="status-badge s-designing">Designing</span>
+              <span style="font-size:0.875rem;font-weight:600;color:var(--text)">4</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span class="status-badge s-approval">Awaiting approval</span>
+              <span style="font-size:0.875rem;font-weight:600;color:var(--text)">2</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span class="status-badge s-revision">Revision requested</span>
+              <span style="font-size:0.875rem;font-weight:600;color:var(--text)">1</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span class="status-badge s-printing">Printing</span>
+              <span style="font-size:0.875rem;font-weight:600;color:var(--text)">3</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span class="status-badge s-shipped">Shipped</span>
+              <span style="font-size:0.875rem;font-weight:600;color:var(--text)">5</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span class="status-badge s-delivered">Delivered</span>
+              <span style="font-size:0.875rem;font-weight:600;color:var(--text)">229</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent orders -->
+      <div class="panel" style="margin-bottom:1rem">
+        <div class="panel-head">
+          <span class="panel-title">Recent orders</span>
+          <span class="panel-action" onclick="showPage('orders')">See all orders →</span>
+        </div>
+        <div style="overflow-x:auto">
+          <div style="text-align:center;padding:4rem 2rem;color:var(--text-3)">
+        <svg width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" viewBox="0 0 24 24" style="margin:0 auto 1rem;opacity:0.3"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>
+        <p style="font-size:1rem;font-weight:500;color:var(--text-2);margin-bottom:6px">No orders yet</p>
+        <p style="font-size:0.875rem">Orders will appear here as customers place them.</p>
+      </div>
+        </div>
+      </div>
+
+      <div class="row-3">
+        <!-- Recent customers -->
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">New customers</span><span class="panel-action" onclick="showPage('customers')">See all</span></div>
+          <div style="display:flex;flex-direction:column">
+            <div style="display:flex;align-items:center;gap:10px;padding:0.875rem 1.25rem;border-bottom:1px solid var(--border)">
+              <div class="customer-av ca-1">FA</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:0.875rem;font-weight:500;color:var(--text)">Fatima Akter</div>
+                <div style="font-size:0.75rem;color:var(--text-3)">Today · Dhaka</div>
+              </div>
+              <div style="font-size:0.75rem;color:var(--text-3)">1 order</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:0.875rem 1.25rem;border-bottom:1px solid var(--border)">
+              <div class="customer-av ca-5">SK</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:0.875rem;font-weight:500;color:var(--text)">Sumaiya Khan</div>
+                <div style="font-size:0.75rem;color:var(--text-3)">Today · Chittagong</div>
+              </div>
+              <div style="font-size:0.75rem;color:var(--text-3)">1 order</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:0.875rem 1.25rem;border-bottom:1px solid var(--border)">
+              <div class="customer-av ca-6">TB</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:0.875rem;font-weight:500;color:var(--text)">Tanvir Bhuiyan</div>
+                <div style="font-size:0.75rem;color:var(--text-3)">Yesterday · Sylhet</div>
+              </div>
+              <div style="font-size:0.75rem;color:var(--text-3)">2 orders</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;padding:0.875rem 1.25rem">
+              <div class="customer-av ca-7">AA</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:0.875rem;font-weight:500;color:var(--text)">Ayesha Ahmed</div>
+                <div style="font-size:0.75rem;color:var(--text-3)">18 Sep · Dhaka</div>
+              </div>
+              <div style="font-size:0.75rem;color:var(--text-3)">1 order</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Design requests -->
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Design requests</span><span class="panel-action badge" style="background:var(--rose);color:#fff;padding:2px 8px;border-radius:10px;font-size:0.6875rem">4 pending</span></div>
+          <div style="display:flex;flex-direction:column">
+            <div style="padding:0.875rem 1.25rem;border-bottom:1px solid var(--border)">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+                <span style="font-size:0.875rem;font-weight:500;color:var(--text)">#PF-2061 · Fatima</span>
+                <span class="status-badge s-received">New</span>
+              </div>
+              <div style="font-size:0.75rem;color:var(--text-3)">Wedding · 48 pages · "Romantic, editorial style"</div>
+              <button class="action-btn ab-primary" style="margin-top:8px;height:28px;font-size:0.75rem" onclick="showToast('Opening design request…','success')">Start design</button>
+            </div>
+            <div style="padding:0.875rem 1.25rem;border-bottom:1px solid var(--border)">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+                <span style="font-size:0.875rem;font-weight:500;color:var(--text)">#PF-2057 · Sumaiya</span>
+                <span class="status-badge s-designing">In progress</span>
+              </div>
+              <div style="font-size:0.75rem;color:var(--text-3)">Birthday · 60 pages · "Warm, colourful"</div>
+            </div>
+            <div style="padding:0.875rem 1.25rem">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+                <span style="font-size:0.875rem;font-weight:500;color:var(--text)">#PF-2055 · Tanvir</span>
+                <span class="status-badge s-revision">Revision</span>
+              </div>
+              <div style="font-size:0.75rem;color:var(--text-3)">"Move family photo to page 1, adjust title font"</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick links -->
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Quick actions</span></div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:0.625rem">
+            <button class="action-btn ab-primary" style="width:100%;height:38px;justify-content:center;gap:8px" onclick="openAddProductModal()">
+              <svg width="14" height="14" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg>
+              Add new product
+            </button>
+            <button class="action-btn ab-ghost" style="width:100%;height:38px;justify-content:center" onclick="showPage('orders')">
+              View pending orders
+            </button>
+            <button class="action-btn ab-ghost" style="width:100%;height:38px;justify-content:center" onclick="showPage('homepage')">
+              Edit homepage
+            </button>
+            <button class="action-btn ab-ghost" style="width:100%;height:38px;justify-content:center" onclick="showPage('settings')">
+              Update settings
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── PRODUCTS ─── -->
+    <section class="page" id="page-products" aria-label="Products">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>Products</h2>
+          <p>Manage your photo book catalogue</p>
+        </div>
+        <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
+          <select class="select-input" aria-label="Filter by category">
+            <option>All categories</option>
+            <option>Wedding</option><option>Couple</option><option>Family</option>
+          </select>
+          <button class="action-btn ab-primary" style="height:38px;gap:6px" onclick="openAddProductModal()">
+            <svg width="13" height="13" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><line x1="6.5" y1="1" x2="6.5" y2="12"/><line x1="1" y1="6.5" x2="12" y2="6.5"/></svg>
+            Add product
+          </button>
+        </div>
+      </div>
+      <div class="products-grid-admin">
+        <!-- Product card 1 -->
+        <div class="product-admin-card">
+          <div class="product-admin-thumb pa-bg-1">
+            <div class="admin-book">
+              <div class="admin-book-spine abs-1"></div>
+              <div class="admin-book-body"><div class="abb-img"></div><div class="abb-l"></div><div class="abb-l"></div></div>
+            </div>
+            <div class="product-admin-badges"><span class="pb pb-best">Bestseller</span></div>
+            <div class="product-admin-actions" aria-label="Product actions">
+              <button class="pa-action" aria-label="Edit product" onclick="openEditProductModal({name:'Classic Photo Book',category:'Wedding',price:2499,salePrice:0,type:'book'}, this.closest('.product-admin-card'))"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="pa-action" aria-label="Duplicate product" onclick="showToast('Product duplicated','success')"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+              <button class="pa-action" aria-label="Delete product" onclick="showToast('Product deleted','')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+            </div>
+          </div>
+          <div class="product-admin-info">
+            <div class="product-admin-name">Classic Photo Book</div>
+            <div class="product-admin-cat">Wedding · Couple · Family</div>
+            <div class="product-admin-footer">
+              <div class="product-admin-price">৳2,499+</div>
+              <label class="toggle-wrap">
+                <span>Published</span>
+                <label class="toggle">
+                  <input type="checkbox" checked aria-label="Published" onchange="showToast(this.checked?'Product published':'Product hidden', this.checked?'success':'')">
+                  <div class="toggle-track"></div>
+                  <div class="toggle-thumb"></div>
+                </label>
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- Product card 2 -->
+        <div class="product-admin-card">
+          <div class="product-admin-thumb pa-bg-2">
+            <div class="admin-book">
+              <div class="admin-book-spine abs-2"></div>
+              <div class="admin-book-body"><div class="abb-img" style="background:#D8D0F0"></div><div class="abb-l" style="background:#9B8AC8"></div><div class="abb-l" style="background:#C0B8E0"></div></div>
+            </div>
+            <div class="product-admin-badges"><span class="pb pb-new">New</span></div>
+            <div class="product-admin-actions" aria-label="Product actions">
+              <button class="pa-action" aria-label="Edit" onclick="openEditProductModal({name:'Premium Photo Book',category:'Travel',price:4499,salePrice:0,type:'book'}, this.closest('.product-admin-card'))"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="pa-action" aria-label="Duplicate" onclick="showToast('Product duplicated','success')"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+              <button class="pa-action" aria-label="Delete" onclick="showToast('Product deleted','')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+            </div>
+          </div>
+          <div class="product-admin-info">
+            <div class="product-admin-name">Premium Photo Book</div>
+            <div class="product-admin-cat">Travel · Couple</div>
+            <div class="product-admin-footer">
+              <div class="product-admin-price">৳4,499+</div>
+              <label class="toggle-wrap">
+                <span>Published</span>
+                <label class="toggle">
+                  <input type="checkbox" checked aria-label="Published" onchange="showToast(this.checked?'Product published':'Product hidden',this.checked?'success':'')">
+                  <div class="toggle-track"></div><div class="toggle-thumb"></div>
+                </label>
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- Product card 3 -->
+        <div class="product-admin-card">
+          <div class="product-admin-thumb pa-bg-3">
+            <div class="admin-book">
+              <div class="admin-book-spine abs-3"></div>
+              <div class="admin-book-body"><div class="abb-img" style="background:#B8D8C8"></div><div class="abb-l" style="background:#6BAA8A"></div><div class="abb-l" style="background:#A0C8B8"></div></div>
+            </div>
+            <div class="product-admin-actions" aria-label="Product actions">
+              <button class="pa-action" aria-label="Edit" onclick="openEditProductModal({name:'Legacy Photo Book',category:'Anniversary',price:5999,salePrice:0,type:'book'}, this.closest('.product-admin-card'))"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="pa-action" aria-label="Duplicate" onclick="showToast('Product duplicated','success')"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+              <button class="pa-action" aria-label="Delete" onclick="showToast('Product deleted','')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+            </div>
+          </div>
+          <div class="product-admin-info">
+            <div class="product-admin-name">Legacy Photo Book</div>
+            <div class="product-admin-cat">Wedding · Family · Anniversary</div>
+            <div class="product-admin-footer">
+              <div class="product-admin-price">৳5,999+</div>
+              <label class="toggle-wrap">
+                <span>Published</span>
+                <label class="toggle">
+                  <input type="checkbox" checked aria-label="Published" onchange="showToast(this.checked?'Product published':'Product hidden',this.checked?'success':'')">
+                  <div class="toggle-track"></div><div class="toggle-thumb"></div>
+                </label>
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- Product card 4 — hidden -->
+        <div class="product-admin-card">
+          <div class="product-admin-thumb pa-bg-4">
+            <div class="admin-book">
+              <div class="admin-book-spine abs-4"></div>
+              <div class="admin-book-body"><div class="abb-img" style="background:#E8D8B0"></div><div class="abb-l" style="background:#D4A060"></div><div class="abb-l" style="background:#E0C890"></div></div>
+            </div>
+            <div class="product-admin-badges"><span class="pb pb-hidden">Hidden</span></div>
+            <div class="product-admin-actions" aria-label="Product actions">
+              <button class="pa-action" aria-label="Edit" onclick="openEditProductModal({name:'Mini Memory Book',category:'Birthday',price:1499,salePrice:0,type:'book'}, this.closest('.product-admin-card'))"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+              <button class="pa-action" aria-label="Delete" onclick="showToast('Product deleted','')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+            </div>
+          </div>
+          <div class="product-admin-info">
+            <div class="product-admin-name">Mini Memory Book</div>
+            <div class="product-admin-cat">Birthday · Baby</div>
+            <div class="product-admin-footer">
+              <div class="product-admin-price">৳1,499+</div>
+              <label class="toggle-wrap">
+                <span>Hidden</span>
+                <label class="toggle">
+                  <input type="checkbox" aria-label="Published" onchange="showToast(this.checked?'Product published':'Product hidden',this.checked?'success':'')">
+                  <div class="toggle-track"></div><div class="toggle-thumb"></div>
+                </label>
+              </label>
+            </div>
+          </div>
+        </div>
+
+      <!-- Friendship Magazine -->
+      <div class="product-admin-card">
+        <div class="product-admin-thumb" style="background:linear-gradient(135deg,#FAE8F0,#F0D0E8);position:relative">
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem">👫</div>
+          <div class="product-admin-badges"><span class="pb pb-new">New</span></div>
+          <div class="product-admin-actions">
+            <button class="pa-action" aria-label="Edit" onclick="openEditProductModal({name:'Friendship Magazine',category:'Friends',price:1799,salePrice:2199,type:'magazine'}, this.closest('.product-admin-card'))"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="pa-action pa-del" aria-label="Delete" onclick="showToast('Product deleted','success')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+          </div>
+        </div>
+        <div class="product-admin-info">
+          <div class="product-admin-name">Friendship Magazine</div>
+          <div class="product-admin-cat">Friends · Magazine</div>
+          <div class="product-admin-footer">
+            <div class="product-admin-price">৳1,799 <span style="text-decoration:line-through;font-size:0.75rem;color:var(--text-3);font-weight:400">৳2,199</span></div>
+            <label class="toggle-wrap">
+              <span>Published</span>
+              <label class="toggle">
+                <input type="checkbox" checked aria-label="Published" onchange="showToast(this.checked?'Product published':'Product hidden',this.checked?'success':'')">
+                <div class="toggle-track"></div><div class="toggle-thumb"></div>
+              </label>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Valentine's Magazine -->
+      <div class="product-admin-card">
+        <div class="product-admin-thumb" style="background:linear-gradient(135deg,#FFF0F4,#FFD6E0);position:relative">
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.5rem">❤️</div>
+          <div class="product-admin-badges"><span class="pb pb-new">New</span></div>
+          <div class="product-admin-actions">
+            <button class="pa-action" aria-label="Edit" onclick="openEditProductModal({name:&quot;Valentine&#39;s Magazine&quot;,category:'Couple',price:1899,salePrice:2299,type:'magazine'}, this.closest('.product-admin-card'))"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button class="pa-action pa-del" aria-label="Delete" onclick="showToast('Product deleted','success')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+          </div>
+        </div>
+        <div class="product-admin-info">
+          <div class="product-admin-name">Valentine's Magazine</div>
+          <div class="product-admin-cat">Couple · Magazine</div>
+          <div class="product-admin-footer">
+            <div class="product-admin-price">৳1,899 <span style="text-decoration:line-through;font-size:0.75rem;color:var(--text-3);font-weight:400">৳2,299</span></div>
+            <label class="toggle-wrap">
+              <span>Published</span>
+              <label class="toggle">
+                <input type="checkbox" checked aria-label="Published" onchange="showToast(this.checked?'Product published':'Product hidden',this.checked?'success':'')">
+                <div class="toggle-track"></div><div class="toggle-thumb"></div>
+              </label>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      </div>
+    </section>
+
+    <!-- ─── CATEGORIES ─── -->
+    <section class="page" id="page-categories" aria-label="Categories">
+      <div class="page-header">
+        <div class="page-header-left"><h2>Categories</h2><p>Manage photo book categories shown on homepage and shop</p></div>
+        <button class="action-btn ab-primary" style="height:38px;gap:6px" onclick="openAddCategoryModal()">
+          <svg width="13" height="13" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><line x1="6.5" y1="1" x2="6.5" y2="12"/><line x1="1" y1="6.5" x2="12" y2="6.5"/></svg>
+          Add category
+        </button>
+      </div>
+      <div class="panel">
+        <table class="data-table" aria-label="Categories">
+          <thead><tr><th>Order</th><th>Category</th><th>Products</th><th>On Homepage</th><th>Visible</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="muted" style="cursor:grab">⠿ 1</td><td><div class="customer-cell"><div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#F2D4D6,#E8B8B9);flex-shrink:0"></div><span style="font-weight:500">Wedding</span></div></td><td class="muted">4 products</td><td><span class="status-badge s-approved">Featured</span></td><td><label class="toggle"><input type="checkbox" checked aria-label="Visible" onchange="showToast(this.checked?'Category visible':'Category hidden',this.checked?'success':'')"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td><td><button class="action-btn ab-ghost" onclick="showToast('Edit category','')">Edit</button></td></tr>
+            <tr><td class="muted" style="cursor:grab">⠿ 2</td><td><div class="customer-cell"><div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#EDD5C8,#E0C4B4);flex-shrink:0"></div><span style="font-weight:500">Couple</span></div></td><td class="muted">3 products</td><td><span class="status-badge s-approved">Featured</span></td><td><label class="toggle"><input type="checkbox" checked aria-label="Visible" onchange="showToast(this.checked?'Category visible':'Category hidden',this.checked?'success':'')"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td><td><button class="action-btn ab-ghost" onclick="showToast('Edit category','')">Edit</button></td></tr>
+            <tr><td class="muted" style="cursor:grab">⠿ 3</td><td><div class="customer-cell"><div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#D8DEDC,#C4CECA);flex-shrink:0"></div><span style="font-weight:500">Family</span></div></td><td class="muted">5 products</td><td><span class="status-badge s-approved">Featured</span></td><td><label class="toggle"><input type="checkbox" checked aria-label="Visible" onchange="showToast(this.checked?'Category visible':'Category hidden',this.checked?'success':'')"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td><td><button class="action-btn ab-ghost" onclick="showToast('Edit category','')">Edit</button></td></tr>
+            <tr><td class="muted" style="cursor:grab">⠿ 4</td><td><div class="customer-cell"><div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#D8D4F0,#C8C0E8);flex-shrink:0"></div><span style="font-weight:500">Travel</span></div></td><td class="muted">2 products</td><td><span class="status-badge s-received">Not featured</span></td><td><label class="toggle"><input type="checkbox" checked aria-label="Visible" onchange="showToast(this.checked?'Category visible':'Category hidden',this.checked?'success':'')"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td><td><button class="action-btn ab-ghost" onclick="showToast('Edit category','')">Edit</button></td></tr>
+            <tr><td class="muted" style="cursor:grab">⠿ 5</td><td><div class="customer-cell"><div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#F0E4D0,#E8D4B8);flex-shrink:0"></div><span style="font-weight:500">Birthday</span></div></td><td class="muted">2 products</td><td><span class="status-badge s-approved">Featured</span></td><td><label class="toggle"><input type="checkbox" checked aria-label="Visible" onchange="showToast(this.checked?'Category visible':'Category hidden',this.checked?'success':'')"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td><td><button class="action-btn ab-ghost" onclick="showToast('Edit category','')">Edit</button></td></tr>
+            <tr><td class="muted" style="cursor:grab">⠿ 6</td><td><div class="customer-cell"><div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#D0E4D8,#B8D4C8);flex-shrink:0"></div><span style="font-weight:500">Baby</span></div></td><td class="muted">1 product</td><td><span class="status-badge s-approved">Featured</span></td><td><label class="toggle"><input type="checkbox" checked aria-label="Visible" onchange="showToast(this.checked?'Category visible':'Category hidden',this.checked?'success':'')"><div class="toggle-track"></div><div class="toggle-thumb"></div></label></td><td><button class="action-btn ab-ghost" onclick="showToast('Edit category','')">Edit</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ─── ORDERS ─── -->
+    <section class="page" id="page-orders" aria-label="Orders">
+      <div class="page-header">
+        <div class="page-header-left"><h2>Orders</h2><p>247 total orders · 8 require action</p></div>
+        <button class="action-btn ab-ghost" style="height:38px;gap:6px" onclick="showToast('Exported to CSV','success')">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+      </div>
+
+      <div class="filter-row" role="group" aria-label="Filter orders by status">
+        <button class="filter-chip active" onclick="setFilter(this)">All <span class="count">247</span></button>
+        <button class="filter-chip" onclick="setFilter(this)">Pending <span class="count">0</span></button>
+        <button class="filter-chip" onclick="setFilter(this)">Designing <span class="count">4</span></button>
+        <button class="filter-chip" onclick="setFilter(this)">Awaiting Approval <span class="count">2</span></button>
+        <button class="filter-chip" onclick="setFilter(this)">Revision <span class="count">1</span></button>
+        <button class="filter-chip" onclick="setFilter(this)">Printing <span class="count">0</span></button>
+        <button class="filter-chip" onclick="setFilter(this)">Shipped <span class="count">5</span></button>
+        <button class="filter-chip" onclick="setFilter(this)">Delivered <span class="count">229</span></button>
+        <div style="margin-left:auto;display:flex;gap:0.75rem;align-items:center">
+          <div class="search-box" role="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="7"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+            <input type="text" placeholder="Search by order ID or name" aria-label="Search orders">
+          </div>
+          <select class="select-input" aria-label="Sort orders">
+            <option>Newest first</option><option>Oldest first</option><option>Highest value</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div style="overflow-x:auto">
+          <div style="text-align:center;padding:4rem 2rem;color:var(--text-3)">
+        <svg width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" viewBox="0 0 24 24" style="margin:0 auto 1rem;opacity:0.3"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <p style="font-size:1rem;font-weight:500;color:var(--text-2);margin-bottom:6px">No customers yet</p>
+        <p style="font-size:0.875rem">Customer accounts will appear here after sign-ups.</p>
+      </div>
+        </div>
+        <div class="pagination">
+          <span class="page-info">Showing 1–6 of 247 orders</span>
+          <div class="page-btns" role="navigation" aria-label="Pagination">
+            <button class="page-btn" aria-label="Previous page"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <button class="page-btn active" aria-current="page">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn" aria-label="More pages">…</button>
+            <button class="page-btn">42</button>
+            <button class="page-btn" aria-label="Next page"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── CUSTOMERS ─── -->
+    <section class="page" id="page-customers" aria-label="Customers">
+      <div class="page-header">
+        <div class="page-header-left"><h2>Customers</h2><p>184 registered customers</p></div>
+      </div>
+      <div class="customer-stats">
+        <div class="stat-card"><div class="stat-header"><div class="stat-icon si-blue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="stat-num">0</div><div class="stat-label">Total customers</div></div>
+        <div class="stat-card"><div class="stat-header"><div class="stat-icon si-green" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div></div><div class="stat-num">0</div><div class="stat-label">New this week</div></div>
+        <div class="stat-card"><div class="stat-header"><div class="stat-icon si-rose" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div><div class="stat-num">৳0</div><div class="stat-label">Avg. order value</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">All customers</span>
+          <div class="search-box" role="search" style="max-width:280px">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="7"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+            <input type="text" placeholder="Search customers…" aria-label="Search customers">
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table" aria-label="Customers table">
+            <thead><tr><th>Customer</th><th>Location</th><th>Orders</th><th>Total spent</th><th>Last order</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><div class="customer-cell"><div class="customer-av ca-1">FA</div><div><div style="font-weight:500">Fatima Akter</div><div style="font-size:0.6875rem;color:var(--text-3)">fatima@email.com</div></div></div></td><td class="muted">Dhaka</td><td>3</td><td>৳11,097</td><td class="muted">Today</td><td><button class="action-btn ab-ghost" onclick="showToast('Customer profile','')">View</button></td></tr>
+              <tr><td><div class="customer-cell"><div class="customer-av ca-2">RH</div><div><div style="font-weight:500">Rafiq Hossain</div><div style="font-size:0.6875rem;color:var(--text-3)">rafiq@email.com</div></div></div></td><td class="muted">Chittagong</td><td>2</td><td>৳9,498</td><td class="muted">Yesterday</td><td><button class="action-btn ab-ghost" onclick="showToast('Customer profile','')">View</button></td></tr>
+              <tr><td><div class="customer-cell"><div class="customer-av ca-3">NI</div><div><div style="font-weight:500">Nadia Islam</div><div style="font-size:0.6875rem;color:var(--text-3)">nadia@email.com</div></div></div></td><td class="muted">Sylhet</td><td>1</td><td>৳4,499</td><td class="muted">19 Sep</td><td><button class="action-btn ab-ghost" onclick="showToast('Customer profile','')">View</button></td></tr>
+              <tr><td><div class="customer-cell"><div class="customer-av ca-4">MR</div><div><div style="font-weight:500">Minhaj Rahman</div><div style="font-size:0.6875rem;color:var(--text-3)">minhaj@email.com</div></div></div></td><td class="muted">Dhaka</td><td>1</td><td>৳2,899</td><td class="muted">18 Sep</td><td><button class="action-btn ab-ghost" onclick="showToast('Customer profile','')">View</button></td></tr>
+              <tr><td><div class="customer-cell"><div class="customer-av ca-5">SK</div><div><div style="font-weight:500">Sumaiya Khan</div><div style="font-size:0.6875rem;color:var(--text-3)">sumaiya@email.com</div></div></div></td><td class="muted">Dhaka</td><td>1</td><td>৳4,699</td><td class="muted">18 Sep</td><td><button class="action-btn ab-ghost" onclick="showToast('Customer profile','')">View</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── HOMEPAGE BUILDER ─── -->
+    <section class="page" id="page-homepage" aria-label="Homepage Builder">
+      <div class="page-header">
+        <div class="page-header-left"><h2>Homepage Builder</h2><p>Control every section of the public homepage without touching code</p></div>
+        <div style="display:flex;gap:0.75rem">
+          <button class="action-btn ab-ghost" style="height:38px" onclick="showToast('Draft saved','success')">Save draft</button>
+          <button class="action-btn ab-primary" style="height:38px" onclick="showToast('Homepage published — changes are live!','success')">Publish changes</button>
+        </div>
+      </div>
+      <div class="builder-layout">
+        <!-- Section list -->
+        <div>
+          <div class="section-list" role="list" aria-label="Homepage sections">
+            <div class="section-list-head">Sections <span style="font-size:0.75rem;color:var(--text-3);font-weight:400">drag to reorder</span></div>
+            <div class="section-item active" role="listitem" onclick="selectSection(this,'Hero')">
+              <span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></span>
+              <div class="si-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg></div>
+              <span class="si-name">Hero</span>
+              <label class="toggle si-toggle"><input type="checkbox" checked aria-label="Show Hero"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="section-item" role="listitem" onclick="selectSection(this,'Categories')">
+              <span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></span>
+              <div class="si-icon"><svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/></svg></div>
+              <span class="si-name">Categories</span>
+              <label class="toggle si-toggle"><input type="checkbox" checked aria-label="Show Categories"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="section-item" role="listitem" onclick="selectSection(this,'Featured Products')">
+              <span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></span>
+              <div class="si-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.6 4 2.1 7L12 16.5 5.5 20l2.1-7L2 9h7z"/></svg></div>
+              <span class="si-name">Featured Products</span>
+              <label class="toggle si-toggle"><input type="checkbox" checked aria-label="Show Featured Products"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="section-item" role="listitem" onclick="selectSection(this,'How It Works')">
+              <span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></span>
+              <div class="si-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <span class="si-name">How It Works</span>
+              <label class="toggle si-toggle"><input type="checkbox" checked aria-label="Show How It Works"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="section-item" role="listitem" onclick="selectSection(this,'Why PhotoFolio')">
+              <span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></span>
+              <div class="si-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              <span class="si-name">Why PhotoFolio</span>
+              <label class="toggle si-toggle"><input type="checkbox" checked aria-label="Show Why PhotoFolio"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="section-item" role="listitem" onclick="selectSection(this,'Testimonials')">
+              <span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></span>
+              <div class="si-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+              <span class="si-name">Testimonials</span>
+              <label class="toggle si-toggle"><input type="checkbox" checked aria-label="Show Testimonials"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="section-item" role="listitem" onclick="selectSection(this,'FAQ')">
+              <span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></span>
+              <div class="si-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+              <span class="si-name">FAQ</span>
+              <label class="toggle si-toggle"><input type="checkbox" checked aria-label="Show FAQ"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="section-item" role="listitem" onclick="selectSection(this,'CTA Banner')">
+              <span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></span>
+              <div class="si-icon"><svg viewBox="0 0 24 24"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg></div>
+              <span class="si-name">CTA Banner</span>
+              <label class="toggle si-toggle"><input type="checkbox" checked aria-label="Show CTA Banner"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="section-item" role="listitem" onclick="selectSection(this,'Footer')">
+              <span class="drag-handle" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></span>
+              <div class="si-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15h18"/></svg></div>
+              <span class="si-name">Footer</span>
+              <label class="toggle si-toggle"><input type="checkbox" checked aria-label="Show Footer"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Editor panel -->
+        <div class="editor-panel">
+          <div class="editor-head">
+            <span class="editor-head-title" id="editorTitle">Hero Section</span>
+            <span class="status-badge s-approved">Live</span>
+          </div>
+          <div class="editor-body">
+            <div class="form-group">
+              <label class="form-label" for="heroTitle">Hero title</label>
+              <input class="form-input" id="heroTitle" type="text" value="Turn your photos into a story.">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="heroSub">Hero subtitle</label>
+              <textarea class="form-textarea" id="heroSub">Beautifully designed photo books, made from the moments you never want to forget. Every page tells a chapter. Every chapter belongs to you.</textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label" for="heroCta1">Primary button text</label>
+                <input class="form-input" id="heroCta1" type="text" value="Create My Photo Book">
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label" for="heroCta2">Secondary button text</label>
+                <input class="form-input" id="heroCta2" type="text" value="Explore Photo Books">
+              </div>
+            </div>
+            <div class="form-divider"></div>
+            <div class="form-group">
+              <label class="form-label">Hero image</label>
+              <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;gap:8px">
+                <input class="form-input" id="heroImgUrl" placeholder="https://i.postimg.cc/xxxxx/hero.jpg" style="font-size:0.8125rem">
+                <button type="button" onclick="previewSettingImg('heroImgUrl','heroPreviewDiv')" style="height:38px;padding:0 12px;background:var(--charcoal);color:#fff;border:none;border-radius:8px;font-size:0.8125rem;cursor:pointer;white-space:nowrap;font-family:var(--sans)">Preview</button>
+              </div>
+              <div id="heroPreviewDiv" style="display:none;border-radius:8px;overflow:hidden;border:1px solid var(--border-1)"><img src="" style="width:100%;max-height:120px;object-fit:cover" alt="Hero preview"></div>
+              <p style="font-size:0.6875rem;color:var(--text-3)">postimages.org এ upload করো → Direct Link paste করো</p>
+            </div>
+            <div style="display:none">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <p>Drop image here or click to upload</p>
+                <span>Recommended: 1920×1080px · JPG or WebP</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="heroEyebrow">Eyebrow label</label>
+              <input class="form-input" id="heroEyebrow" type="text" value="Premium Handcrafted Photobooks">
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn-cancel">Discard</button>
+            <button class="btn-save" onclick="showToast('Hero section saved and published!','success')">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Save &amp; publish
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── COUPONS ─── -->
+    <section class="page" id="page-coupons" aria-label="Coupons">
+      <div class="page-header">
+        <div class="page-header-left"><h2>Coupons &amp; Discounts</h2><p>Create and manage discount codes for customers</p></div>
+        <button class="action-btn ab-primary" style="height:38px;gap:6px" onclick="openAddCouponModal()">
+          <svg width="13" height="13" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><line x1="6.5" y1="1" x2="6.5" y2="12"/><line x1="1" y1="6.5" x2="12" y2="6.5"/></svg>
+          Add coupon
+        </button>
+      </div>
+
+      <!-- Existing coupons -->
+      <div class="card-grid" style="grid-template-columns:1fr">
+
+        <!-- WELCOME10 -->
+        <div style="background:var(--white);border:1px solid var(--border-1);border-radius:12px;padding:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:1rem">
+            <div style="background:var(--rose-pale);border:1px dashed var(--rose);border-radius:8px;padding:0.5rem 1rem;font-family:monospace;font-size:1rem;font-weight:700;color:var(--rose);letter-spacing:0.08em">WELCOME10</div>
+            <div>
+              <div style="font-size:0.9375rem;font-weight:500;color:var(--text)">10% off — new customers</div>
+              <div style="font-size:0.75rem;color:var(--text-3)">Min order ৳1,500 · Max discount ৳500 · Used: 0 times</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem">
+            <span style="font-size:0.75rem;background:#EAF7F0;color:#2A6A44;padding:3px 10px;border-radius:20px;font-weight:500">Active</span>
+            <button class="action-btn ab-ghost" style="height:32px" onclick="showToast('Edit coupon — coming soon','')">Edit</button>
+            <button class="action-btn ab-ghost" style="height:32px;color:var(--red)" onclick="showToast('Coupon deactivated','success')">Deactivate</button>
+          </div>
+        </div>
+
+        <!-- FLAT200 -->
+        <div style="background:var(--white);border:1px solid var(--border-1);border-radius:12px;padding:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:1rem">
+            <div style="background:var(--rose-pale);border:1px dashed var(--rose);border-radius:8px;padding:0.5rem 1rem;font-family:monospace;font-size:1rem;font-weight:700;color:var(--rose);letter-spacing:0.08em">FLAT200</div>
+            <div>
+              <div style="font-size:0.9375rem;font-weight:500;color:var(--text)">৳200 flat discount</div>
+              <div style="font-size:0.75rem;color:var(--text-3)">Min order ৳2,000 · Used: 0 times</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.75rem">
+            <span style="font-size:0.75rem;background:#EAF7F0;color:#2A6A44;padding:3px 10px;border-radius:20px;font-weight:500">Active</span>
+            <button class="action-btn ab-ghost" style="height:32px" onclick="showToast('Edit coupon','')">Edit</button>
+            <button class="action-btn ab-ghost" style="height:32px;color:var(--red)" onclick="showToast('Coupon deactivated','success')">Deactivate</button>
+          </div>
+        </div>
+
+        <!-- Add new coupon form area -->
+        <div id="addCouponFormArea" style="display:none;background:var(--bg-2);border:1px solid var(--border-1);border-radius:12px;padding:1.5rem">
+          <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem">New coupon</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem">
+            <div><label class="form-label" for="newCouponCode">Code</label><input class="form-input" id="newCouponCode" placeholder="e.g. SUMMER20" style="text-transform:uppercase"></div>
+            <div><label class="form-label" for="newCouponType">Type</label>
+              <select class="form-input" id="newCouponType" style="height:38px">
+                <option value="percentage">Percentage (%)</option>
+                <option value="flat">Flat amount (৳)</option>
+              </select>
+            </div>
+            <div><label class="form-label" for="newCouponValue">Discount value</label><input class="form-input" id="newCouponValue" type="number" placeholder="e.g. 10 for 10% or 200 for ৳200"></div>
+            <div><label class="form-label" for="newCouponMin">Min order (৳)</label><input class="form-input" id="newCouponMin" type="number" placeholder="e.g. 1500"></div>
+            <div><label class="form-label" for="newCouponMax">Max discount (৳)</label><input class="form-input" id="newCouponMax" type="number" placeholder="Leave empty for no limit"></div>
+            <div><label class="form-label" for="newCouponLimit">Usage limit</label><input class="form-input" id="newCouponLimit" type="number" placeholder="Leave empty for unlimited"></div>
+            <div><label class="form-label" for="newCouponExpiry">Expiry date</label><input class="form-input" id="newCouponExpiry" type="date"></div>
+          </div>
+          <div style="display:flex;gap:0.75rem">
+            <button class="action-btn ab-primary" style="height:38px" onclick="saveCoupon()">Save coupon</button>
+            <button class="action-btn ab-ghost" style="height:38px" onclick="document.getElementById('addCouponFormArea').style.display='none'">Cancel</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+        <!-- ─── SETTINGS ─── -->
+    <section class="page" id="page-settings" aria-label="Settings">
+      <div class="page-header">
+        <div class="page-header-left"><h2>Settings</h2><p>Control all global site settings, shipping, payments and SEO</p></div>
+      </div>
+      <div class="settings-layout">
+        <div class="settings-nav" role="list" aria-label="Settings sections">
+          <div class="settings-nav-item active" role="listitem" onclick="selectSetting(this)"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>General</div>
+          <div class="settings-nav-item" role="listitem" onclick="selectSetting(this)"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Shipping</div>
+          <div class="settings-nav-item" role="listitem" onclick="selectSetting(this)"><svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Payment (PipraPays)</div>
+          <div class="settings-nav-item" role="listitem" onclick="selectSetting(this)"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>Social links</div>
+          <div class="settings-nav-item" role="listitem" onclick="selectSetting(this)"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.29h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.96-.96a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Contact info</div>
+          <div class="settings-nav-item" role="listitem" onclick="selectSetting(this)"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>SEO defaults</div>
+          <div class="settings-nav-item" role="listitem" onclick="selectSetting(this)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg>Admin users</div>
+        </div>
+
+        <div class="settings-form">
+          <div class="settings-form-head">
+            <div class="settings-form-title">General settings</div>
+            <div class="settings-form-sub">Brand identity, contact, currency and global preferences</div>
+          </div>
+          <div class="settings-form-body">
+            <div class="form-section-title">Brand</div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label" for="brandName">Brand name</label><input class="form-input" id="brandName" value="PhotoFolio"></div>
+              <div class="form-group"><label class="form-label" for="currency">Currency</label><input class="form-input" id="currency" value="BDT (৳)"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Logo URL <span style="font-weight:400;color:var(--text-3)">(postimage.org)</span></label>
+              <div style="display:flex;gap:8px">
+                <input class="form-input" id="logoUrl" placeholder="https://i.postimg.cc/xxxxx/logo.png" style="font-size:0.8125rem">
+                <button type="button" onclick="previewSettingImg('logoUrl','logoPreviewDiv')" style="height:38px;padding:0 12px;background:var(--charcoal);color:#fff;border:none;border-radius:8px;font-size:0.8125rem;cursor:pointer;font-family:var(--sans)">Preview</button>
+              </div>
+              <div id="logoPreviewDiv" style="margin-top:6px;display:none"><img src="" style="max-height:60px;border-radius:6px;border:1px solid var(--border-1)" alt="Logo preview"></div>
+              <p style="font-size:0.6875rem;color:var(--text-3);margin-top:4px">postimages.org এ upload করো → Direct Link paste করো</p>
+            </div>
+            <div class="form-divider"></div>
+            <div class="form-section-title">Contact</div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label" for="phone">Phone</label><input class="form-input" id="phone" value="+880 1XXXXXXXXX"></div>
+              <div class="form-group"><label class="form-label" for="whatsapp">WhatsApp</label><input class="form-input" id="whatsapp" value="+880 1XXXXXXXXX"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label" for="email">Email</label><input class="form-input" id="email" value="hello@photofolio.com.bd"></div>
+              <div class="form-group"><label class="form-label" for="address">Address</label><input class="form-input" id="address" value="Dhaka, Bangladesh"></div>
+            </div>
+            <div class="form-divider"></div>
+            <div class="form-section-title">Shipping</div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label" for="shippingDhaka">Inside Dhaka (৳)</label><input class="form-input" id="shippingDhaka" value="0 (free above ৳3,000)"></div>
+              <div class="form-group"><label class="form-label" for="shippingOutside">Outside Dhaka (৳)</label><input class="form-input" id="shippingOutside" value="120"></div>
+            </div>
+            <div class="form-divider"></div>
+            <!-- PipraPays section -->
+            <div class="form-section-title" style="display:flex;align-items:center;justify-content:space-between">
+              <span>PipraPays Gateway</span>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:0.75rem;color:var(--text-3);font-weight:400" id="gatewayStatusLabel">Gateway: Enabled</span>
+                <label style="position:relative;display:inline-block;width:42px;height:24px;cursor:pointer">
+                  <input type="checkbox" id="gatewayEnabled" checked onchange="updateGatewayLabel()" style="opacity:0;width:0;height:0">
+                  <span style="position:absolute;inset:0;background:var(--rose);border-radius:34px;transition:0.3s" id="gatewayTrack"></span>
+                  <span style="position:absolute;left:3px;bottom:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:0.3s;transform:translateX(18px)" id="gatewayThumb"></span>
+                </label>
+              </div>
+            </div>
+
+            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1rem">
+              <div style="flex:1">
+                <div style="font-size:0.9rem;font-weight:600;color:#fff;margin-bottom:2px">PipraPays</div>
+                <div style="font-size:0.75rem;color:rgba(255,255,255,0.5)">Bangladeshi payment gateway — bKash, Nagad, Rocket, Card</div>
+              </div>
+              <div style="background:rgba(255,255,255,0.1);border-radius:6px;padding:4px 12px;font-size:0.6875rem;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:0.06em">INTEGRATED</div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="ppMerchantId">Merchant ID
+                  <span style="font-size:0.6875rem;font-weight:400;color:var(--text-3)"> — from PipraPays dashboard</span>
+                </label>
+                <input class="form-input" id="ppMerchantId" placeholder="PP_MERCHANT_XXXXXXXXXX" style="font-family:monospace;font-size:0.875rem">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="ppMode">Environment</label>
+                <select class="form-input" id="ppMode" style="height:40px" onchange="updateModeLabel()">
+                  <option value="sandbox">Sandbox (testing)</option>
+                  <option value="live" selected>Live (production)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ppApiKey">API Secret Key
+                <span style="font-size:0.6875rem;font-weight:400;color:var(--text-3)"> — keep this secret, never share</span>
+              </label>
+              <div style="display:flex;gap:8px">
+                <input class="form-input" id="ppApiKey" type="password" placeholder="pp_live_xxxxxxxxxxxxxxxxxxxxxxxx" style="font-family:monospace;font-size:0.875rem;flex:1">
+                <button type="button" onclick="toggleApiKey()" style="height:40px;padding:0 14px;border:1px solid var(--border);border-radius:8px;font-size:0.8125rem;background:var(--bg);cursor:pointer;white-space:nowrap;color:var(--text-2)" id="apiKeyToggleBtn">Show</button>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="ppCallbackUrl">Callback URL
+                  <span style="font-size:0.6875rem;font-weight:400;color:var(--text-3)"> — add this in PipraPays dashboard</span>
+                </label>
+                <div style="display:flex;gap:8px">
+                  <input class="form-input" id="ppCallbackUrl" value="https://photofolioo.com.bd/api/payment/callback" readonly style="font-size:0.8125rem;font-family:monospace;flex:1;background:var(--bg);color:var(--text-3)">
+                  <button type="button" onclick="copyCallbackUrl()" style="height:40px;padding:0 14px;border:1px solid var(--border);border-radius:8px;font-size:0.8125rem;background:var(--bg);cursor:pointer;white-space:nowrap;color:var(--text-2)">Copy</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="ppCancelUrl">Cancel / Return URL</label>
+                <input class="form-input" id="ppCancelUrl" value="https://photofolioo.com.bd/payment/cancel" style="font-size:0.8125rem;font-family:monospace">
+              </div>
+            </div>
+
+            <div class="form-divider"></div>
+            <div class="form-section-title">Advance Payment Policy</div>
+
+            <div style="background:var(--rose-pale);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem">
+              <div>
+                <div style="font-size:0.875rem;font-weight:600;color:var(--charcoal);margin-bottom:3px">Advance payment mandatory</div>
+                <div style="font-size:0.8125rem;color:var(--text-3)">Orders cannot be placed without completed payment. COD is disabled.</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:0.75rem;font-weight:600;color:var(--green)">ACTIVE</span>
+                <label style="position:relative;display:inline-block;width:42px;height:24px;cursor:pointer">
+                  <input type="checkbox" id="advancePayMandatory" checked style="opacity:0;width:0;height:0">
+                  <span style="position:absolute;inset:0;background:var(--rose);border-radius:34px"></span>
+                  <span style="position:absolute;left:3px;bottom:3px;width:18px;height:18px;background:#fff;border-radius:50%;transform:translateX(18px)"></span>
+                </label>
+              </div>
+            </div>
+
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem">
+              <div>
+                <div style="font-size:0.875rem;font-weight:600;color:var(--charcoal);margin-bottom:3px">Cash on Delivery (COD)</div>
+                <div style="font-size:0.8125rem;color:var(--text-3)">Allow customers to pay on delivery. Disabled when advance payment is on.</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:0.75rem;font-weight:600;color:var(--red)">DISABLED</span>
+                <label style="position:relative;display:inline-block;width:42px;height:24px;cursor:pointer;opacity:0.4;pointer-events:none">
+                  <input type="checkbox" id="codEnabled" style="opacity:0;width:0;height:0">
+                  <span style="position:absolute;inset:0;background:var(--text-3);border-radius:34px"></span>
+                  <span style="position:absolute;left:3px;bottom:3px;width:18px;height:18px;background:#fff;border-radius:50%"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="refundPolicy">Refund policy text
+                <span style="font-size:0.6875rem;font-weight:400;color:var(--text-3)"> — shown on payment page</span>
+              </label>
+              <textarea class="form-textarea" id="refundPolicy" rows="3">Once printing starts, refunds are not possible as your book is made-to-order. If there is a quality defect, we will reprint or refund in full. Contact us within 7 days of delivery.</textarea>
+            </div>
+
+            <div style="background:#EEF5FB;border:1px solid #C5D9EE;border-radius:10px;padding:0.875rem 1rem;display:flex;align-items:flex-start;gap:10px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4A7FBF" stroke-width="1.75" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <p style="font-size:0.8125rem;color:#3A5F8A;line-height:1.6"><strong>Setup checklist:</strong> 1) Sign up at piprapays.com → 2) Get your Merchant ID &amp; API Key → 3) Add the Callback URL above to your PipraPays dashboard → 4) Enter credentials here → 5) Test with Sandbox mode first → 6) Switch to Live when ready.</p>
+            </div>
+          </div>
+          <div class="save-bar">
+            <button class="btn-cancel">Discard</button>
+            <button class="btn-save" onclick="showToast('Settings saved!','success')">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Save settings
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- end page-wrap -->
+</div><!-- end main -->
+</div><!-- end app -->
+
+<!-- ── Modals ── -->
+
+<!-- Order detail modal -->
+<div class="modal-overlay" id="orderModal" role="dialog" aria-modal="true" aria-label="Order detail">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">Order #PF-2061 — Fatima Akter</span>
+      <button class="modal-close" onclick="closeModal('orderModal')" aria-label="Close">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+        <div><div class="form-label">Customer</div><div style="font-size:0.9375rem;font-weight:500">Fatima Akter</div><div style="font-size:0.8125rem;color:var(--text-3)">fatima@email.com · Dhaka</div></div>
+        <div><div class="form-label">Order date</div><div style="font-size:0.9375rem;font-weight:500">21 Sep 2026</div><div style="font-size:0.8125rem;color:var(--text-3)">11:24 AM</div></div>
+        <div><div class="form-label">Product</div><div style="font-size:0.9375rem;font-weight:500">Classic Photo Book</div><div style="font-size:0.8125rem;color:var(--text-3)">48 pages · Linen Hardcover · Matte</div></div>
+        <div><div class="form-label">Amount</div><div style="font-size:1.25rem;font-weight:600;color:var(--text)">৳3,899</div><div style="font-size:0.8125rem;color:var(--text-3)">Payment pending</div></div>
+      </div>
+
+      <div class="form-label" style="margin-bottom:0.75rem">Order timeline</div>
+      <div class="order-status-timeline" aria-label="Order status timeline">
+        <div class="ost-step">
+          <div class="ost-dot done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="ost-content"><div class="ost-title">Order received</div><div class="ost-sub">21 Sep · 11:24 AM</div></div>
+        </div>
+        <div class="ost-step">
+          <div class="ost-dot done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="ost-content"><div class="ost-title">Photos received</div><div class="ost-sub">21 Sep · 12:10 PM · 47 photos uploaded</div></div>
+        </div>
+        <div class="ost-step">
+          <div class="ost-dot done"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="ost-content"><div class="ost-title">Design completed</div><div class="ost-sub">21 Sep · 5:30 PM</div></div>
+        </div>
+        <div class="ost-step">
+          <div class="ost-dot active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg></div>
+          <div class="ost-content"><div class="ost-title">Awaiting customer approval</div><div class="ost-sub">Design preview sent — waiting for response</div></div>
+        </div>
+        <div class="ost-step">
+          <div class="ost-dot"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg></div>
+          <div class="ost-content"><div class="ost-title">Payment confirmed</div><div class="ost-sub">Pending</div></div>
+        </div>
+        <div class="ost-step">
+          <div class="ost-dot"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg></div>
+          <div class="ost-content"><div class="ost-title">Printing &amp; production</div><div class="ost-sub">Pending</div></div>
+        </div>
+        <div class="ost-step">
+          <div class="ost-dot"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg></div>
+          <div class="ost-content"><div class="ost-title">Shipped</div><div class="ost-sub">Pending</div></div>
+        </div>
+        <div class="ost-step">
+          <div class="ost-dot"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg></div>
+          <div class="ost-content"><div class="ost-title">Delivered</div><div class="ost-sub">Pending</div></div>
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+      <div class="form-group">
+        <label class="form-label" for="statusChange">Update status</label>
+        <select class="select-input" id="statusChange" style="width:100%" aria-label="Update order status">
+          <option>Awaiting customer approval</option>
+          <option>Approved</option><option>Payment confirmed</option>
+          <option>Printing</option><option>Packed</option>
+          <option>Shipped</option><option>Delivered</option><option>Cancelled</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="adminNote">Note to customer (optional)</label>
+        <textarea class="form-textarea" id="adminNote" placeholder="Add a message for the customer…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('orderModal')">Close</button>
+      <button class="btn-save" onclick="showToast('Order updated!','success');closeModal('orderModal')">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Update order
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add product modal -->
+<div class="modal-overlay" id="addProductModal" role="dialog" aria-modal="true" aria-label="Add product">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title">Add new product</span>
+      <button class="modal-close" onclick="closeModal('addProductModal')" aria-label="Close">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label" for="pName">Product name</label><input class="form-input" id="pName" placeholder="e.g. Classic Photo Book"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label" for="pCat">Category</label><select class="form-input" id="pCat" style="height:38px"><option value=''>Select category…</option><option>Wedding</option><option>Birthday</option><option>Travel</option><option>Couple</option><option>Family</option><option>Baby</option><option>Graduation</option><option>Anniversary</option><option>Friends</option><option>Valentine</option></select></div>
+        <div class="form-group"><label class="form-label" for="pPrice">Base price (৳)</label><input class="form-input" id="pPrice" type="number" placeholder="2499"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label" for="pSalePrice">Sale price (৳)</label><input class="form-input" id="pSalePrice" type="number" placeholder="Leave blank if no sale"></div>
+        <div class="form-group"><label class="form-label" for="pPages">Base page count</label><input class="form-input" id="pPages" type="number" placeholder="24"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+        <div class="form-group"><label class="form-label" for="pType">Product type</label>
+          <select class="form-input" id="pType" style="height:38px">
+            <option value="book">Photo Book</option>
+            <option value="magazine">Magazine</option>
+            <option value="photocard">Photocard / Card</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label" for="pStatus">Status</label>
+          <select class="form-input" id="pStatus" style="height:38px">
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+        <div class="form-group"><label class="form-label" for="pSalePrice">Sale price (৳)</label><input class="form-input" id="pSalePrice" type="number" placeholder="Original price (crossed out)"></div>
+        <div class="form-group"><label class="form-label" for="pStock">Stock / availability</label>
+          <select class="form-input" id="pStock" style="height:38px">
+            <option>In stock</option><option>Limited</option><option>Out of stock</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label" for="pDesc">Short description</label><textarea class="form-textarea" id="pDesc" placeholder="Shown on product cards and listing pages…"></textarea></div>
+      <div class="form-group">
+        <label class="form-label">Product images <span style="font-weight:400;color:var(--text-3)">(postimage.org URLs)</span></label>
+        <div id="pImgList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+        <div style="display:flex;gap:8px">
+          <input class="form-input" id="pImgUrl" placeholder="https://i.postimg.cc/xxxxx/image.jpg" style="flex:1;font-size:0.8125rem">
+          <button type="button" onclick="addProductImage()" style="height:38px;padding:0 14px;background:var(--charcoal);color:#fff;border:none;border-radius:8px;font-size:0.8125rem;cursor:pointer;white-space:nowrap;font-family:var(--sans)">+ Add</button>
+        </div>
+        <p style="font-size:0.6875rem;color:var(--text-3);margin-top:5px">postimages.org এ upload করো → Direct Link copy করো → এখানে paste করো</p>
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.875rem;cursor:pointer"><input type="checkbox"> Mark as Bestseller</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.875rem;cursor:pointer"><input type="checkbox"> Mark as New</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.875rem;cursor:pointer"><input type="checkbox" checked> Publish immediately</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('addProductModal')">Cancel</button>
+      <button class="btn-save" onclick="showToast('Product created!','success');closeModal('addProductModal')">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Create product
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-wrap" role="status" aria-live="polite" aria-atomic="true" id="toastWrap"></div>
+
+<script>
+(function(){
+  /* ── Page nav ── */
+  window.showPage = function(id) {
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+    var pg = document.getElementById('page-' + id);
+    if(pg) pg.classList.add('active');
+
+    document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); n.removeAttribute('aria-current'); });
+    var match = Array.from(document.querySelectorAll('.nav-item')).find(function(n){
+      return n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+id+"'");
+    });
+    if(match){ match.classList.add('active'); match.setAttribute('aria-current','page'); }
+  };
+
+  /* ── Modal ── */
+  window.openOrderModal = function(){ document.getElementById('orderModal').classList.add('open'); document.body.style.overflow='hidden'; };
+  window.openAddProductModal = function(){ document.getElementById('addProductModal').classList.add('open'); document.getElementById('addProductModal').style.display='flex'; document.body.style.overflow='hidden'; };
+
+  // ── Add Category Modal ──────────────────────────────────────
+  window.openAddCategoryModal = function() {
+    var m = document.getElementById('addCategoryModal');
+    m.style.display = 'flex';
+    m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function(){ document.getElementById('catName').focus(); }, 100);
+  };
+
+  window.selectEmoji = function(btn) {
+    document.querySelectorAll('.cat-emoji-btn').forEach(function(b){ b.classList.remove('selected'); });
+    btn.classList.add('selected');
+    document.getElementById('catPreviewCard').textContent = btn.getAttribute('data-emoji');
+  };
+
+  window.selectColor = function(swatch) {
+    document.querySelectorAll('.color-swatch').forEach(function(s){ s.classList.remove('selected'); });
+    swatch.classList.add('selected');
+    document.getElementById('catPreviewCard').style.background = swatch.getAttribute('data-color');
+  };
+
+  window.updateCatPreview = function() {
+    var name = document.getElementById('catName').value || 'New Category';
+    document.getElementById('catPreviewName').textContent = name;
+    var slug = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    document.getElementById('catSlug').value  = slug;
+    document.getElementById('slugPreview').textContent = slug || 'category-name';
+  };
+
+  window.saveCategoryFromModal = function() {
+    var name = document.getElementById('catName').value.trim();
+    if (!name) { showToast('Please enter a category name',''); return; }
+    showToast('Category "' + name + '" created!', 'success');
+    closeModal('addCategoryModal');
+    document.getElementById('catName').value = '';
+  };
+
+  // ── Edit Product Modal ──────────────────────────────────────
+  // Track which product card is being edited
+  var _editingCard = null;
+
+  window.saveProductChanges = function() {
+    var name   = document.getElementById('epName').value.trim();
+    var price  = parseInt(document.getElementById('epPrice').value) || 0;
+    var sale   = parseInt(document.getElementById('epSale').value)  || 0;
+    var status = document.getElementById('epStatus').value;
+    var badge  = document.getElementById('epBadge').value;
+
+    if (!name) { showToast('Product name required', ''); return; }
+    if (!price) { showToast('Price required', ''); return; }
+
+    // Update the product card in the UI
+    if (_editingCard) {
+      var nameEl  = _editingCard.querySelector('.product-admin-name');
+      var priceEl = _editingCard.querySelector('.product-admin-price');
+      if (nameEl)  nameEl.textContent = name;
+      if (priceEl) {
+        if (sale > 0) {
+          priceEl.innerHTML = '৳' + price.toLocaleString('en-IN') +
+            ' <span style="text-decoration:line-through;font-size:0.75rem;color:var(--text-3);font-weight:400">৳' +
+            sale.toLocaleString('en-IN') + '</span>';
+        } else {
+          priceEl.textContent = '৳' + price.toLocaleString('en-IN') + '+';
+        }
+      }
+      // Update badge
+      var badgesEl = _editingCard.querySelector('.product-admin-badges');
+      if (badgesEl && badge) {
+        var badgeMap = {
+          'new':'pb-new', 'bestseller':'pb-best', 'sale':'pb-sale',
+          'limited':'pb-premium', '':'',
+        };
+        var badgeLabels = {
+          'new':'New','bestseller':'Bestseller','sale':'Sale','limited':'Limited',
+        };
+        if (badge) {
+          badgesEl.innerHTML = '<span class="pb ' + (badgeMap[badge]||'pb-new') + '">' + (badgeLabels[badge]||badge) + '</span>';
+        }
+      }
+    }
+
+    showToast('✓ ' + name + ' updated!', 'success');
+    closeModal('editProductModal');
+    _editingCard = null;
+  };
+
+  window.openEditProductModal = function(product, cardEl) {
+    if (!product) return;
+    document.getElementById('editProductModalTitle').textContent = 'Edit — ' + product.name;
+    document.getElementById('epName').value  = product.name  || '';
+    document.getElementById('epPrice').value = product.price || '';
+    document.getElementById('epSale').value  = product.salePrice || '';
+    if (product.type) {
+      var typeSelect = document.getElementById('epType');
+      for(var i=0;i<typeSelect.options.length;i++){
+        if(typeSelect.options[i].value===product.type){ typeSelect.selectedIndex=i; break; }
+      }
+    }
+    if (product.category) {
+      var catSelect = document.getElementById('epCat');
+      for(var i=0;i<catSelect.options.length;i++){
+        if(catSelect.options[i].text===product.category){ catSelect.selectedIndex=i; break; }
+      }
+    }
+    _editingCard = cardEl || null;
+    var m = document.getElementById('editProductModal');
+    m.style.display = 'flex';
+    m.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+
+  // Override closeModal to handle display:none modals
+  var _origClose = window.closeModal;
+  window.closeModal = function(id) {
+    var m = document.getElementById(id);
+    if (!m) return;
+    m.classList.remove('open');
+    m.style.display = 'none';
+    document.body.style.overflow = '';
+  };
+
+  window.closeModal = function(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; };
+  document.querySelectorAll('.modal-overlay').forEach(function(o){
+    o.addEventListener('click', function(e){ if(e.target===o) closeModal(o.id); });
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(function(o){ closeModal(o.id); });
+  });
+
+  /* ── Toast ── */
+  window.showToast = function(msg, type) {
+    var wrap = document.getElementById('toastWrap');
+    var t = document.createElement('div');
+    t.className = 'toast' + (type==='success' ? ' success' : '');
+    t.innerHTML = type==='success'
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>' + msg
+      : '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' + msg;
+    wrap.appendChild(t);
+    requestAnimationFrame(function(){ t.classList.add('show'); });
+    setTimeout(function(){
+      t.classList.remove('show');
+      setTimeout(function(){ t.remove(); }, 350);
+    }, 3000);
+  };
+
+  /* ── Filter chips ── */
+  window.setFilter = function(el) {
+    el.closest('.filter-row').querySelectorAll('.filter-chip').forEach(function(c){ c.classList.remove('active'); });
+    el.classList.add('active');
+  };
+
+  /* ── Homepage section selector ── */
+  window.selectSection = function(el, name) {
+    el.closest('.section-list').querySelectorAll('.section-item').forEach(function(s){ s.classList.remove('active'); });
+    el.classList.add('active');
+    document.getElementById('editorTitle').textContent = name + ' Section';
+  };
+
+  /* ── Settings nav ── */
+  window.selectSetting = function(el) {
+    el.closest('.settings-nav').querySelectorAll('.settings-nav-item').forEach(function(s){ s.classList.remove('active'); });
+    el.classList.add('active');
+    var label = el.textContent.trim();
+    document.querySelector('.settings-form-title').textContent = label + ' settings';
+  };
+
+  /* ── Keyboard nav for nav items ── */
+  document.querySelectorAll('.nav-item[tabindex="0"]').forEach(function(el){
+    el.addEventListener('keydown', function(e){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); el.click(); }
+    });
+  });
+  // ── postimage.org URL Image System ────────────────────────
+
+  // Add Product — image list
+  var _addProductImages = [];
+  window.addProductImage = function() {
+    var url = document.getElementById('pImgUrl').value.trim();
+    if (!url) { showToast('URL paste করো',''); return; }
+    if (!url.startsWith('http')) { showToast('Valid URL দাও (https://...)',''); return; }
+    _addProductImages.push(url);
+    renderProductImageList('pImgList', _addProductImages, '_addProductImages');
+    document.getElementById('pImgUrl').value = '';
+    showToast('Image added!','success');
+  };
+
+  // Edit Product — image list
+  var _editProductImages = [];
+  window.addEditProductImage = function() {
+    var url = document.getElementById('epImgUrl').value.trim();
+    if (!url) { showToast('URL paste করো',''); return; }
+    if (!url.startsWith('http')) { showToast('Valid URL দাও (https://...)',''); return; }
+    _editProductImages.push(url);
+    renderProductImageList('epImgList', _editProductImages, '_editProductImages');
+    renderEditImagePreviews();
+    document.getElementById('epImgUrl').value = '';
+    showToast('Image added!','success');
+  };
+
+  function renderProductImageList(containerId, arr, arrName) {
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = arr.map(function(url, i) {
+      return '<div style="display:flex;align-items:center;gap:8px;background:var(--bg-2);border:1px solid var(--border-1);border-radius:7px;padding:5px 10px">' +
+        '<img src="' + url + '" style="width:32px;height:32px;object-fit:cover;border-radius:4px;flex-shrink:0" onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\'><rect fill=\' %23f0e8e8\' width=\'32\' height=\'32\'/></svg>'">' +
+        '<span style="flex:1;font-size:0.75rem;color:var(--text-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + url.split('/').pop() + '</span>' +
+        '<button onclick="removeImg(' + i + ','' + arrName + '')" style="color:var(--red);background:none;border:none;cursor:pointer;font-size:1rem;line-height:1;flex-shrink:0" aria-label="Remove">×</button>' +
+        '</div>';
+    }).join('');
+  }
+
+  function renderEditImagePreviews() {
+    var wrap = document.getElementById('epImgPreviewWrap');
+    var grid = document.getElementById('epImgPreviewGrid');
+    if (!wrap || !grid) return;
+    if (_editProductImages.length === 0) { wrap.style.display='none'; return; }
+    wrap.style.display = 'block';
+    grid.innerHTML = _editProductImages.map(function(url, i) {
+      return '<div style="position:relative">' +
+        '<img src="' + url + '" style="width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--border-1)">' +
+        '<button onclick="removeImg(' + i + ','_editProductImages')" style="position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:0.6875rem;line-height:18px;text-align:center">×</button>' +
+        '</div>';
+    }).join('');
+  }
+
+  window.removeImg = function(idx, arrName) {
+    if (arrName === '_addProductImages') { _addProductImages.splice(idx,1); renderProductImageList('pImgList',_addProductImages,arrName); }
+    if (arrName === '_editProductImages') { _editProductImages.splice(idx,1); renderProductImageList('epImgList',_editProductImages,arrName); renderEditImagePreviews(); }
+  };
+
+  // Enter key on URL inputs
+  ['pImgUrl','epImgUrl'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); id === 'pImgUrl' ? addProductImage() : addEditProductImage(); }
+    });
+  });
+
+  // Category image preview
+  window.previewCatImage = function() {
+    var url = document.getElementById('catImgUrl').value.trim();
+    if (!url) { showToast('URL paste করো',''); return; }
+    var wrap = document.getElementById('catImgPreview');
+    var img  = document.getElementById('catImgPreviewEl');
+    if (!wrap || !img) return;
+    img.src = url;
+    wrap.style.display = 'block';
+    img.onerror = function() { showToast('Image load হয়নি — URL check করো',''); wrap.style.display='none'; };
+    img.onload  = function() { showToast('Image preview ready!','success'); };
+  };
+
+  // Settings image preview
+  window.previewSettingImg = function(inputId, previewId) {
+    var url = document.getElementById(inputId).value.trim();
+    if (!url) { showToast('URL paste করো',''); return; }
+    var wrap = document.getElementById(previewId);
+    if (!wrap) return;
+    var img = wrap.querySelector('img');
+    if (img) { img.src = url; wrap.style.display='block'; }
+    showToast('Preview updated!','success');
+  };
+
+  // Load existing images when edit modal opens
+  var _origOpenEdit = window.openEditProductModal;
+  window.openEditProductModal = function(product, cardEl) {
+    _editProductImages = [];
+    // Load existing image from card thumbnail as first image
+    if (cardEl) {
+      var thumbImg = cardEl.querySelector('.product-admin-thumb img');
+      if (thumbImg && thumbImg.src && thumbImg.src.startsWith('http')) {
+        _editProductImages.push(thumbImg.src);
+      }
+    }
+    renderProductImageList('epImgList', _editProductImages, '_editProductImages');
+    renderEditImagePreviews();
+    if (_origOpenEdit) _origOpenEdit(product, cardEl);
+  };
+
+  // Save product — include images in save
+  var _origSaveProduct = window.saveProductChanges;
+  window.saveProductChanges = function() {
+    // Update product card thumbnail with first image URL if provided
+    var cardEl = null; // will be set by _origSaveProduct
+    _origSaveProduct && _origSaveProduct();
+    // Update card image if we have one
+    if (_editProductImages.length > 0) {
+      // Find the active card being edited (already saved by origSaveProduct)
+      var thumbEls = document.querySelectorAll('.product-admin-thumb');
+      // We'll show toast confirming image saved
+      showToast(_editProductImages.length + ' image(s) saved!','success');
+    }
+  };
+
+  // ── Coupon page ────────────────────────────────────────────
+  window.openAddCouponModal = function() {
+    var area = document.getElementById('addCouponFormArea');
+    if (area) {
+      area.style.display = 'block';
+      area.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('newCouponCode').focus();
+    }
+  };
+
+  window.saveCoupon = function() {
+    var code  = (document.getElementById('newCouponCode').value || '').trim().toUpperCase();
+    var type  = document.getElementById('newCouponType').value;
+    var value = document.getElementById('newCouponValue').value;
+    if (!code)  { showToast('Coupon code লিখো', ''); return; }
+    if (!value) { showToast('Discount value দাও', ''); return; }
+    showToast('Coupon ' + code + ' created!', 'success');
+    document.getElementById('addCouponFormArea').style.display = 'none';
+    document.getElementById('newCouponCode').value  = '';
+    document.getElementById('newCouponValue').value = '';
+  };
+
+  // Auto-uppercase coupon code input
+  var ccInput = document.getElementById('newCouponCode');
+  if (ccInput) {
+    ccInput.addEventListener('input', function() {
+      var pos = this.selectionStart;
+      this.value = this.value.toUpperCase();
+      this.setSelectionRange(pos, pos);
+    });
+  }
+
+
+  // ── Payment settings ──────────────────────────────────────────
+  window.updateGatewayLabel = function() {
+    var on = document.getElementById('gatewayEnabled').checked;
+    document.getElementById('gatewayStatusLabel').textContent = 'Gateway: ' + (on ? 'Enabled' : 'Disabled');
+    document.getElementById('gatewayTrack').style.background = on ? 'var(--rose)' : 'var(--text-3)';
+    document.getElementById('gatewayThumb').style.transform = on ? 'translateX(18px)' : 'translateX(0)';
+  };
+
+  window.updateModeLabel = function() {
+    var mode = document.getElementById('ppMode').value;
+    var banner = document.querySelector('.pp-mode-banner');
+    if (banner) banner.textContent = mode === 'sandbox' ? '⚠ Sandbox mode — payments are test only' : '✓ Live mode — real payments active';
+  };
+
+  window.toggleApiKey = function() {
+    var inp = document.getElementById('ppApiKey');
+    var btn = document.getElementById('apiKeyToggleBtn');
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Hide'; }
+    else { inp.type = 'password'; btn.textContent = 'Show'; }
+  };
+
+  window.copyCallbackUrl = function() {
+    var url = document.getElementById('ppCallbackUrl').value;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(function(){ showToast('Callback URL copied!', 'success'); });
+    } else {
+      showToast('Copy: ' + url, '');
+    }
+  };
+
+  window.savePaymentSettings = function() {
+    var merchantId = (document.getElementById('ppMerchantId').value || '').trim();
+    var apiKey     = (document.getElementById('ppApiKey').value || '').trim();
+    var mode       = document.getElementById('ppMode').value;
+    var enabled    = document.getElementById('gatewayEnabled').checked;
+
+    if (enabled && !merchantId) { showToast('Merchant ID দাও', ''); return; }
+    if (enabled && !apiKey)     { showToast('API Key দাও', ''); return; }
+
+    // In production: save to Firestore settings/payment doc
+    showToast('Payment settings saved! Gateway: ' + (enabled ? 'ON' : 'OFF') + ' · Mode: ' + mode, 'success');
+  };
+})();
+</script>
+
+<!-- Add Category Modal -->
+<div class="modal-overlay" id="addCategoryModal" role="dialog" aria-modal="true" aria-label="Add category" style="display:none">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-header">
+      <span class="modal-title">Add new category</span>
+      <button class="modal-close" onclick="closeModal('addCategoryModal')" aria-label="Close">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="catName">Category name <span style="color:var(--rose)">*</span></label>
+        <input class="form-input" id="catName" placeholder="e.g. Friendship, Valentine, Pet…" oninput="updateCatPreview()">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="catSlug">URL slug</label>
+        <input class="form-input" id="catSlug" placeholder="auto-generated from name" style="font-family:monospace;font-size:0.875rem">
+        <span style="font-size:0.75rem;color:var(--text-3)">photofolioo.com.bd/category/<strong id="slugPreview">friendship</strong></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Category icon / emoji</label>
+        <div class="cat-emoji-grid" id="emojiGrid">
+          <button class="cat-emoji-btn selected" data-emoji="👫" onclick="selectEmoji(this)" aria-label="Friends">👫</button>
+          <button class="cat-emoji-btn" data-emoji="❤️" onclick="selectEmoji(this)" aria-label="Love">❤️</button>
+          <button class="cat-emoji-btn" data-emoji="🐾" onclick="selectEmoji(this)" aria-label="Pet">🐾</button>
+          <button class="cat-emoji-btn" data-emoji="🎄" onclick="selectEmoji(this)" aria-label="Christmas">🎄</button>
+          <button class="cat-emoji-btn" data-emoji="🌸" onclick="selectEmoji(this)" aria-label="Spring">🌸</button>
+          <button class="cat-emoji-btn" data-emoji="🎓" onclick="selectEmoji(this)" aria-label="Graduation">🎓</button>
+          <button class="cat-emoji-btn" data-emoji="🏖️" onclick="selectEmoji(this)" aria-label="Beach">🏖️</button>
+          <button class="cat-emoji-btn" data-emoji="🎉" onclick="selectEmoji(this)" aria-label="Party">🎉</button>
+          <button class="cat-emoji-btn" data-emoji="🌍" onclick="selectEmoji(this)" aria-label="World">🌍</button>
+          <button class="cat-emoji-btn" data-emoji="🏔️" onclick="selectEmoji(this)" aria-label="Mountain">🏔️</button>
+          <button class="cat-emoji-btn" data-emoji="🎸" onclick="selectEmoji(this)" aria-label="Music">🎸</button>
+          <button class="cat-emoji-btn" data-emoji="⭐" onclick="selectEmoji(this)" aria-label="Star">⭐</button>
+          <button class="cat-emoji-btn" data-emoji="🌹" onclick="selectEmoji(this)" aria-label="Rose">🌹</button>
+          <button class="cat-emoji-btn" data-emoji="🎭" onclick="selectEmoji(this)" aria-label="Theater">🎭</button>
+          <button class="cat-emoji-btn" data-emoji="🏋️" onclick="selectEmoji(this)" aria-label="Fitness">🏋️</button>
+          <button class="cat-emoji-btn" data-emoji="✏️" onclick="selectEmoji(this)" aria-label="Custom">✏️</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Card background color</label>
+        <div class="color-swatch-grid" id="colorSwatches">
+          <div class="color-swatch selected" data-color="#FAE8F0" style="background:#FAE8F0" onclick="selectColor(this)" title="Pink"></div>
+          <div class="color-swatch" data-color="#FFD6E0" style="background:#FFD6E0" onclick="selectColor(this)" title="Rose"></div>
+          <div class="color-swatch" data-color="#E8F4FD" style="background:#E8F4FD" onclick="selectColor(this)" title="Blue"></div>
+          <div class="color-swatch" data-color="#E8F8EF" style="background:#E8F8EF" onclick="selectColor(this)" title="Green"></div>
+          <div class="color-swatch" data-color="#FFF3E0" style="background:#FFF3E0" onclick="selectColor(this)" title="Orange"></div>
+          <div class="color-swatch" data-color="#F3E5F5" style="background:#F3E5F5" onclick="selectColor(this)" title="Purple"></div>
+          <div class="color-swatch" data-color="#FAFAE8" style="background:#FAFAE8" onclick="selectColor(this)" title="Yellow"></div>
+          <div class="color-swatch" data-color="#F5F5F5" style="background:#F5F5F5" onclick="selectColor(this)" title="Grey"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Category image <span style="font-weight:400;color:var(--text-3)">(postimage.org URL)</span></label>
+        <div style="display:flex;gap:8px">
+          <input class="form-input" id="catImgUrl" placeholder="https://i.postimg.cc/xxxxx/wedding.jpg" style="font-size:0.8125rem">
+          <button type="button" onclick="previewCatImage()" style="height:38px;padding:0 12px;background:var(--charcoal);color:#fff;border:none;border-radius:8px;font-size:0.8125rem;cursor:pointer;white-space:nowrap;font-family:var(--sans)">Preview</button>
+        </div>
+        <div id="catImgPreview" style="display:none;margin-top:8px;border-radius:8px;overflow:hidden;border:1px solid var(--border-1)">
+          <img id="catImgPreviewEl" src="" alt="Category preview" style="width:100%;max-height:100px;object-fit:cover">
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+        <div class="form-group">
+          <label class="form-label" for="catOrder">Display order</label>
+          <input class="form-input" id="catOrder" type="number" value="10" min="1" max="99">
+          <span style="font-size:0.6875rem;color:var(--text-3)">Lower = shown first</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="catStatus">Visibility</label>
+          <select class="form-input" id="catStatus" style="height:38px">
+            <option value="visible">Visible</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="catDesc">Description <span style="color:var(--text-3);font-weight:400">(optional)</span></label>
+        <input class="form-input" id="catDesc" placeholder="Short description for SEO and category page">
+      </div>
+
+      <!-- Live preview -->
+      <div class="cat-preview" aria-label="Category card preview">
+        <span style="font-size:0.6875rem;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;display:block;margin-bottom:0.5rem">Preview</span>
+        <div class="cat-preview-card" id="catPreviewCard" style="background:#FAE8F0">👫</div>
+        <div class="cat-preview-name" id="catPreviewName">Friendship</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('addCategoryModal')">Cancel</button>
+      <button class="btn-save" onclick="saveCategoryFromModal()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Save category
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Product Modal (full) -->
+<div class="modal-overlay" id="editProductModal" role="dialog" aria-modal="true" aria-label="Edit product" style="display:none">
+  <div class="modal-box" style="max-width:580px">
+    <div class="modal-header">
+      <span class="modal-title" id="editProductModalTitle">Edit product</span>
+      <button class="modal-close" onclick="closeModal('editProductModal')" aria-label="Close">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="2" x2="14" y2="14"/><line x1="14" y1="2" x2="2" y2="14"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label" for="epName">Product name</label><input class="form-input" id="epName"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+        <div class="form-group"><label class="form-label" for="epType">Type</label>
+          <select class="form-input" id="epType" style="height:38px">
+            <option value="book">Photo Book</option><option value="magazine">Magazine</option><option value="photocard">Photocard</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label" for="epCat">Category</label>
+          <select class="form-input" id="epCat" style="height:38px">
+            <option>Wedding</option><option>Birthday</option><option>Travel</option><option>Couple</option><option>Family</option><option>Baby</option><option>Graduation</option><option>Anniversary</option><option>Friends</option><option>Valentine</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+        <div class="form-group"><label class="form-label" for="epPrice">Price (৳)</label><input class="form-input" id="epPrice" type="number"></div>
+        <div class="form-group"><label class="form-label" for="epSale">Sale / original price (৳)</label><input class="form-input" id="epSale" type="number" placeholder="Leave empty if no sale"></div>
+      </div>
+      <div class="form-group"><label class="form-label" for="epDesc">Description</label><textarea class="form-textarea" id="epDesc"></textarea></div>
+      <div class="form-group">
+        <label class="form-label">Product images <span style="font-weight:400;color:var(--text-3)">(postimage.org URLs)</span></label>
+        <div id="epImgList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+        <div style="display:flex;gap:8px">
+          <input class="form-input" id="epImgUrl" placeholder="https://i.postimg.cc/xxxxx/image.jpg" style="flex:1;font-size:0.8125rem">
+          <button type="button" onclick="addEditProductImage()" style="height:38px;padding:0 14px;background:var(--charcoal);color:#fff;border:none;border-radius:8px;font-size:0.8125rem;cursor:pointer;white-space:nowrap;font-family:var(--sans)">+ Add</button>
+        </div>
+        <p style="font-size:0.6875rem;color:var(--text-3);margin-top:5px">
+          Upload to <a href="https://postimages.org" target="_blank" style="color:var(--rose)">postimages.org</a> → copy Direct Link → paste here.
+        </p>
+        <div id="epImgPreviewWrap" style="display:none;margin-top:10px">
+          <p style="font-size:0.75rem;font-weight:500;color:var(--text-2);margin-bottom:6px">Current images:</p>
+          <div id="epImgPreviewGrid" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">
+        <div class="form-group"><label class="form-label" for="epStatus">Status</label>
+          <select class="form-input" id="epStatus" style="height:38px">
+            <option>Published</option><option>Draft</option><option>Hidden</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label" for="epBadge">Badge</label>
+          <select class="form-input" id="epBadge" style="height:38px">
+            <option value="">None</option><option value="new">New</option><option value="bestseller">Bestseller</option><option value="sale">Sale</option><option value="limited">Limited</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('editProductModal')">Cancel</button>
+      <button class="btn-save" onclick="saveProductChanges()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Save changes
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+</body></html>
